@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>{{.title}}</title>
+    {{range .css}}
+        <link rel="stylesheet" href="{{.|CSSURL}}" media="screen" title="no title" charset="utf-8"/>
+    {{end}}
+    <style media="screen">
+      * {
+          box-sizing: border-box;
+          margin: 0;
+          padding: 0;
+          font-family: Microsoft Yahei,Helvetica Neue,sans-serif;
+      }
+      *:after,
+      *:before {
+          box-sizing: border-box;
+      }
+      body,
+      html {
+          width: 100%;
+          height: 100%;
+          position: relative;
+          background-color: #f3f6f7;
+      }
+    </style>
+</head>
+
+<body>
+    {{range .data}}
+        <input type="hidden" id="{{.key}}" value="{{.value}}" />
+    {{end}}
+    <script src="http://localhost:9090/webpack-dev-server.js"></script>
+    {{range .script}}
+    <script type="text/javascript" src="{{.|ScriptURL}}"></script>
+    {{end}}
+
+</body>
+
+</html>

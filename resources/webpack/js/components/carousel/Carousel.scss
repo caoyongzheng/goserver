@@ -1,0 +1,25 @@
+$time: 300ms;
+.carousel {
+    margin: auto;
+    position: relative;
+    background-color: #46553f;
+    overflow-x: hidden;
+}
+.img {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    transition: left $time ease-in;
+}
+.enter {
+    left: 100%;
+}
+.enterActive {
+    left: 0;
+}
+.leave {
+    left: 0;
+}
+.leaveActive {
+    left: -100%;
+}

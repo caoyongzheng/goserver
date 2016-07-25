@@ -1,0 +1,43 @@
+.pagelink {
+    display: inline-block;
+    font-size: 1rem;
+    vertical-align: top;
+}
+.pagelink:nth-child(n+2) {
+    margin-left: 5px;
+}
+.pagelink span {
+    display: inline-block;
+    min-width: 16px;
+    padding: 3px 5px;
+    line-height: 20px;
+    background: #f7f7f7;
+    color: #666;
+    text-align: center;
+    box-sizing: content-box;
+}
+.pagelink .common {
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    border-bottom-color: rgba(0, 0, 0, 0.3);
+    text-shadow: 0 1px 0 #fff;
+    background-origin: border-box;
+    background-image: linear-gradient(to bottom, #fff, #eee);
+    cursor: pointer;
+}
+.pagelink .common:hover {
+    background-color: #fafafa;
+    color: #666;
+    outline: 0;
+    background-image: none,;
+}
+.pagelink .active {
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    border-bottom-color: rgba(0, 0, 0, 0.4);
+    background: #009dd8;
+    color: #fff;
+    box-sizing: content-box;
+    background-image: linear-gradient(to bottom, #00b4f5, #008dc5);
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.2);
+}

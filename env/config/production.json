@@ -1,0 +1,10 @@
+{
+    "addr": "www.caoyongzheng.com",
+    "port": ":80",
+    "DB":"localhost",
+    "DBName":"gotest",
+    "resources.imgs":"/resources/gotest/imgs",
+    "resources.videos":"/resources/gotest/videos",
+    "assetsAddr":"",
+    "assets":"resources/webpack/assets"
+}
