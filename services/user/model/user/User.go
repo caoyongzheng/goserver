@@ -1,7 +1,7 @@
 package userM
 
 import (
-	"github.com/caoyongzheng/test/env"
+	"github.com/caoyongzheng/gotest/env"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )

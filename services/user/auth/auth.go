@@ -2,7 +2,7 @@ package auth
 
 import (
 	"github.com/astaxie/beego/session"
-	"github.com/caoyongzheng/test/services/user/model/user"
+	"github.com/caoyongzheng/gotest/services/user/model/user"
 	"github.com/go-martini/martini"
 	"net/http"
 )

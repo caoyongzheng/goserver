@@ -1,5 +1,5 @@
 {
-	"ImportPath": "github.com/caoyongzheng/test",
+	"ImportPath": "github.com/caoyongzheng/gotest",
 	"GoVersion": "devel-ba966f5",
 	"GodepVersion": "v74",
 	"Packages": [

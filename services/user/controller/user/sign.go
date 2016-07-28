@@ -2,8 +2,8 @@ package user
 
 import (
 	"github.com/astaxie/beego/session"
-	"github.com/caoyongzheng/test/model"
-	"github.com/caoyongzheng/test/services/user/model/user"
+	"github.com/caoyongzheng/gotest/model"
+	"github.com/caoyongzheng/gotest/services/user/model/user"
 	"github.com/martini-contrib/render"
 )
 

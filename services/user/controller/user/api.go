@@ -1,9 +1,9 @@
 package user
 
 import (
-	"github.com/caoyongzheng/test/env"
-	"github.com/caoyongzheng/test/services/user/auth"
-	"github.com/caoyongzheng/test/services/user/model/user"
+	"github.com/caoyongzheng/gotest/env"
+	"github.com/caoyongzheng/gotest/services/user/auth"
+	"github.com/caoyongzheng/gotest/services/user/model/user"
 	"github.com/go-martini/martini"
 	"github.com/martini-contrib/binding"
 )

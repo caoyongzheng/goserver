@@ -1,7 +1,7 @@
 package static
 
 import (
-	"github.com/caoyongzheng/test/env"
+	"github.com/caoyongzheng/gotest/env"
 	"github.com/go-martini/martini"
 	"github.com/martini-contrib/render"
 )

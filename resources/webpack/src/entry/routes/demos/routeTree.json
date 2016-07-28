@@ -1,0 +1,104 @@
+{
+    "name": "demos",
+    "childs": [{
+        "name": "css3",
+        "childs": [{
+            "name": "图片轮播",
+            "leaf": true,
+            "link": "/demos/css3/carousel"
+        }]
+    }, {
+        "name": "canvas",
+        "childs": [{
+            "name": "2d",
+            "childs": [{
+                "name": "七巧板",
+                "leaf": true,
+                "link": "/demos/canvas/2d/tangram"
+            }, {
+                "name": "倒计时",
+                "leaf": true,
+                "link": "/demos/canvas/2d/countdown"
+            }, {
+                "name": "图标",
+                "leaf": true,
+                "link": "/demos/canvas/2d/icons"
+            }, {
+                "name": "相册",
+                "leaf": true,
+                "link": "/demos/canvas/2d/gallery"
+            }]
+        }, {
+            "name": "WebGL",
+            "childs": [{
+                "name": "点",
+                "leaf": true,
+                "link": "/demos/canvas/webgl/point"
+            }, {
+                "name": "基本图形",
+                "leaf": true,
+                "link": "/demos/canvas/webgl/baseshapes"
+            }, {
+                "name": "变换",
+                "leaf": true,
+                "link": "/demos/canvas/webgl/transform"
+            }, {
+                "name": "颜色与纹理",
+                "leaf": true,
+                "link": "/demos/canvas/webgl/coloredandtexture"
+            }, {
+                "name": "看三角形",
+                "leaf": true,
+                "link": "/demos/canvas/webgl/lookattriangles"
+            }, {
+                "name": "改变观察者视点",
+                "leaf": true,
+                "link": "/demos/canvas/webgl/lookattriangleswithkeys"
+            }, {
+                "name": "正射投影",
+                "leaf": true,
+                "link": "/demos/canvas/webgl/orthoview"
+            }, {
+                "name": "透视投影",
+                "leaf": true,
+                "link": "/demos/canvas/webgl/perspectiveview"
+            }, {
+                "name": "立方体",
+                "leaf": true,
+                "link": "/demos/canvas/webgl/hellocube"
+            }, {
+                "name": "单一颜色立方体",
+                "leaf": true,
+                "link": "/demos/canvas/webgl/coloredcube"
+            }, {
+                "name": "光照立方体",
+                "leaf": true,
+                "link": "/demos/canvas/webgl/lightedcube"
+            }, {
+                "name": "光照平移旋转立方体",
+                "leaf": true,
+                "link": "/demos/canvas/webgl/lightedtranslatedrotatedcube"
+            }]
+        }]
+    }, {
+        "name": "gallery",
+        "leaf": true,
+        "link": "/demos/gallery"
+    }, {
+        "name": "paging",
+        "leaf": true,
+        "link": "/demos/paging"
+    }, {
+        "name": "chat",
+        "leaf": true,
+        "link": "/demos/chat"
+    },{
+        "name": "popup",
+        "leaf": true,
+        "link": "/demos/popup"
+    },{
+        "name": "wysiwyg",
+        "leaf": true,
+        "link": "/demos/wysiwyg"
+    }]
+}
