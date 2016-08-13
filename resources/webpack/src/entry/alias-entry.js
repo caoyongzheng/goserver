@@ -5,5 +5,6 @@ module.exports = {
 
   Nav:'./components/nav/nav.jsx',
 
-  Stores: './stores.jsx',
+  StateStores: './utils/stores/statestores.jsx',
+  DataStores: './utils/stores/datastores.jsx',
 }

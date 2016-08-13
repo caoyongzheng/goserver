@@ -1,0 +1,35 @@
+.textBox {
+    width: 100%;
+    margin: 0 auto 30px;
+    border-radius: 3px;
+    padding-bottom: 40px;
+    box-shadow: 0 0 15px 0 #CCC;
+    background: #F6F4EC;
+}
+.titleBox {
+    width: 88%;
+    margin: 0 auto;
+    padding: 0 0 10px 10px;
+    border-bottom: 1px solid #E3E1D9;
+    position: relative;
+}
+.textTitle {
+    padding-top: 24px;
+    font: 26px/1 "Microsoft YaHei";
+    margin-bottom: 10px;
+    color: #000;
+}
+.textInfo {
+    color: #999;
+    font: 12px/1.8 "Microsoft YaHei";
+    position: relative;
+}
+.text {
+    width: 88%;
+    margin: 0 auto;
+    font-size: 22px;
+}
+.text p {
+    margin: 0.8em 0;
+    line-height: 1.8;
+}

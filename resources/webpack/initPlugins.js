@@ -2,6 +2,7 @@ var webpack = require('webpack')
 var production = process.env.NODE_ENV === 'production'
 var ExtractPlugin = require('extract-text-webpack-plugin')
 var CleanPlugin = require('clean-webpack-plugin')
+var HtmlWebpackPlugin = require('html-webpack-plugin')
 
 function initPlugins(config) {
   config.plugins = [
@@ -14,6 +15,11 @@ function initPlugins(config) {
     new webpack.ProvidePlugin({
        jQuery: "jquery",
        $: "jquery"
+    }),
+    new HtmlWebpackPlugin({
+      title: 'My App',
+      filename: 'template/app.html',
+      template: 'src/template/template.html',
     }),
   ]
 

@@ -9,7 +9,7 @@ function Home() {
     <div name="home" style={LayoutStyle.stageCol}>
       <Nav />
       <div name="body" style={LayoutStyle.body}>
-        <h1>{'this is the home page'}</h1>
+        <h1>{'this is the home page1'}</h1>
       </div>
     </div>
   )

@@ -9,13 +9,7 @@ import (
 func init() {
 	//html
 	env.Router.Get("/", func(r render.Render) {
-		r.HTML(
-			200,
-			"template",
-			map[string][]string{
-				"script": []string{"vendor", "app"},
-			},
-		)
+		r.HTML(200, "app", nil)
 	})
 	//webfront js,css,image etc.
 	env.Router.Use(martini.Static(

@@ -1,6 +1,6 @@
 import request from 'superagent'
 
-import { setState } from 'Stores'
+import { setState } from 'StateStores'
 
 export function getUser() {
   request

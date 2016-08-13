@@ -1,11 +1,12 @@
 package env
 
 import (
+	"html/template"
+	"net/http"
+
 	"github.com/astaxie/beego/session"
 	"github.com/go-martini/martini"
 	"github.com/martini-contrib/render"
-	"html/template"
-	"net/http"
 )
 
 //Router 路由
@@ -15,8 +16,8 @@ func initRouter() {
 	Router = martini.Classic()
 
 	Router.Use(render.Renderer(render.Options{
-		Directory:  "view",                     // Specify what path to load the templates from.
-		Extensions: []string{".tmpl", ".html"}, // Specify extensions to load for templates.
+		Directory:  "resources/webpack/assets/template", // Specify what path to load the templates from.
+		Extensions: []string{".tmpl", ".html"},          // Specify extensions to load for templates.
 		Funcs: []template.FuncMap{
 			template.FuncMap{
 				"ScriptURL": ScriptURL,

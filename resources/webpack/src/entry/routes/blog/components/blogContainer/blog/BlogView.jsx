@@ -6,7 +6,7 @@ import SideInfo from './components/SideInfo.jsx'
 import marked from 'Marked'
 import { withRouter } from 'react-router'
 
-import { connect } from 'Stores'
+import { connect } from 'StateStores'
 
 const styles = {
   viewBox: {
