@@ -30,19 +30,19 @@ type Section struct {
 func Add(n Novel) (err error) {
 	n.ID = bson.NewObjectId().Hex()
 	query := func(c *mgo.Collection) {
-		err = c.Insert(n)
+		err = c.Insert(&n)
 	}
 	env.WitchCollection("Novel", query)
 	return
 }
 
-func (n *Novel) Get() (err error) {
-	if n.ID == "" {
+func Get(id string) (n Novel, err error) {
+	if id == "" {
 		err = errors.New("id is nil")
 		return
 	}
 	query := func(c *mgo.Collection) {
-		err = c.FindId(n.ID).One(n)
+		err = c.FindId(id).One(&n)
 	}
 	env.WitchCollection("Novel", query)
 	return

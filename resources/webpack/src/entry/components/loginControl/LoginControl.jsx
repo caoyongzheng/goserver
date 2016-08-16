@@ -1,4 +1,4 @@
-import React, { PropTypes } from 'react'
+import React, { PropTypes, Component } from 'react'
 import { withRouter } from 'react-router'
 
 import _ from 'lodash'
@@ -15,7 +15,7 @@ import { imageURL } from 'PathUtil'
 import { setHeaderIcon } from 'UserAction'
 
 // LoginControl 登录控制
-class LoginControl extends React.Component {
+class LoginControl extends Component {
   state = {
     hide: true,
   }
@@ -64,7 +64,7 @@ class LoginControl extends React.Component {
     }
     return (
       <ul>
-        <li className={css.item} onMouseLeave={() => this.setHide(true)}>
+        <li ref="userInfo" className={css.item} onMouseLeave={() => this.setHide(true)}>
           <a className={css.item}>
             <img
               src={imageURL(user.headerIcon) || DefaultHeaderIcon}

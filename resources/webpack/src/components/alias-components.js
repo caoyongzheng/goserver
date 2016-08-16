@@ -1,4 +1,6 @@
 module.exports = {
+  Button: './button/Button.jsx',
+
   Carousel: './carousel/Carousel.jsx',
 
   Input: './common/forms/Input.jsx',

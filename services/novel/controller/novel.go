@@ -8,6 +8,7 @@ import (
 	"github.com/caoyongzheng/gotest/services/user/model/user"
 	"github.com/go-martini/martini"
 	"github.com/martini-contrib/binding"
+	"github.com/martini-contrib/render"
 )
 
 func init() {
@@ -16,15 +17,18 @@ func init() {
 	})
 }
 
-func AddNovel(n novel.Novel, sess session.Store) map[string]interface{} {
+func AddNovel(n novel.Novel, sess session.Store, r render.Render) {
 	if n.Author == "" || n.Name == "" {
-		return map[string]interface{}{"success": false, "desc": "小说名字和作者不能为空"}
+		r.JSON(200, map[string]interface{}{"success": false, "desc": "小说名字和作者不能为空"})
+		return
 	}
 	u := sess.Get("user").(*userM.User)
 	n.UserID = u.ID
 	err := novel.Add(n)
 	if err != nil {
-		return map[string]interface{}{"success": false, "desc": err.Error()}
+		r.JSON(200, map[string]interface{}{"success": false, "desc": err.Error()})
+		return
 	}
-	return map[string]interface{}{"success": true, "desc": "新增书籍成功", "data": n}
+	r.JSON(200, map[string]interface{}{"success": true, "desc": "新增书籍成功", "data": n})
+	return
 }

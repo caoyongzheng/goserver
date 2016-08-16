@@ -9,7 +9,7 @@ class Viewer extends React.Component {
     const { params } = this.props
     const novel = DataStores.get('novelreader').get('novel')
     console.log(novel)
-    const section = _.find(novel.sections, { 'id': params.sectionID })
+    const section = _.find(novel.sections, { id: params.sectionID })
     return (
       <section className={css.textBox}>
         <div className={css.titleBox}>

@@ -14,6 +14,7 @@ const AppRoute = {
     require('./routes/video/index.jsx'),
     require('./routes/blog/index.jsx'),
     require('./routes/novel/reader/index.jsx'),
+    require('./routes/my/index.jsx'),
   ],
 }
 

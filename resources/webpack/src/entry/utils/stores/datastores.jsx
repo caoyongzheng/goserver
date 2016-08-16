@@ -4,9 +4,7 @@ class DataStore {
   constructor(data) {
     this.data = data || {}
   }
-  get = (key) => {
-    return this.data[key]
-  }
+  get = (key) => this.data[key]
   set = (key, value) => {
     this.data[key] = value
   }
@@ -27,9 +25,7 @@ class DataStores {
     }
     return this.datastores[key]
   }
-  get = (key) => {
-    return this.datastores[key]
-  }
+  get = (key) => this.datastores[key]
   del = (key) => {
     if (!_.isEmpty(this.datastores[key])) {
       delete this.datastores[key]

@@ -1,8 +1,9 @@
-import React, { PropTypes } from 'react'
+import React from 'react'
 import css from './Catalog.scss'
 import DataStores from 'DataStores'
 import _ from 'lodash'
 import { withRouter } from 'react-router'
+
 class Catalog extends React.Component {
   handleClick = (id) => {
     this.props.router.push(`/novelreader/viewer/${id}`)
