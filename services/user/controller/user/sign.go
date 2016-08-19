@@ -47,7 +47,7 @@ func GetSessionUser(r render.Render, sess session.Store) {
 		r.JSON(200, model.NewResult(false, 0, "用户不存在", nil))
 		return
 	}
-	uu := u.(*userM.User)
+	uu := u.(userM.User)
 	uu.Password = ""
 	r.JSON(200, model.NewResult(true, 0, "用户存在", uu))
 }

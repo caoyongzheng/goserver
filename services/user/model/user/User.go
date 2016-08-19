@@ -71,10 +71,9 @@ func Add(u User) (err error) {
 }
 
 //GetByUsernameAndPassword 根据用户名和密码获取用户
-func GetByUsernameAndPassword(username, password string) (u *User, err error) {
-	u = &User{}
+func GetByUsernameAndPassword(username, password string) (u User, err error) {
 	query := func(c *mgo.Collection) {
-		err = c.Find(bson.M{"username": username, "password": password}).One(u)
+		err = c.Find(bson.M{"username": username, "password": password}).One(&u)
 	}
 	env.WitchCollection("User", query)
 	return
@@ -82,8 +81,8 @@ func GetByUsernameAndPassword(username, password string) (u *User, err error) {
 
 // GenerateAnonymousUser should generate an anonymous user model
 // for all sessions. This should be an unauthenticated 0 value struct.
-func GenerateAnonymousUser() *User {
-	return &User{}
+func GenerateAnonymousUser() User {
+	return User{}
 }
 
 //GetByID 根据ID获取User

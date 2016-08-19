@@ -6,8 +6,6 @@ import SideInfo from './components/SideInfo.jsx'
 import marked from 'Marked'
 import { withRouter } from 'react-router'
 
-import { connect } from 'StateStores'
-
 const styles = {
   viewBox: {
     position: 'relative',
@@ -139,8 +137,4 @@ BlogView.propTypes = {
   blog: PropTypes.object.isRequired,
 }
 
-const propsFn = (state) => ({
-  user: state.user,
-})
-
-export default withRouter(connect('app', { propsFn }, BlogView))
+export default withRouter(BlogView)

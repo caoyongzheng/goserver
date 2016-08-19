@@ -20,7 +20,7 @@ class LeftNav extends Component {
   render() {
     return (
       <div style={styles.stage}>
-        <div style={styles.item} onClick={() => this.linkTo(R.mynovels)}>{'我的小说'}</div>
+        <div style={styles.item} onClick={() => this.linkTo(R.MyNovelList)}>{'我的小说'}</div>
       </div>
     )
   }

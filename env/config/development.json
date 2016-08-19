@@ -1,10 +1,8 @@
 {
     "addr": "localhost",
-    "port": ":8080",
-    "DB":"localhost",
+    "port": ":80",
     "DBName":"gotest",
     "resources.imgs":"/resources/gotest/imgs",
     "resources.videos":"/resources/gotest/videos",
-    "assetsAddr":"http://127.0.0.1:9090",
     "assets":"resources/webpack/assets"
 }

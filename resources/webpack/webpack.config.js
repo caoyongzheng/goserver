@@ -18,7 +18,7 @@ var config = {
       path: './assets',
       filename: 'js/[name].bundle.js',
       chunkFilename: 'js/[chunkhash].chunk.js',
-      publicPath: production?'assets/':'http://localhost:9090/assets/',
+      publicPath: production?'assets/':'http://localhost:3001/assets/',
     },
     module: {
       preLoaders: [{
@@ -62,7 +62,7 @@ var config = {
       loaderPostfixes:['-loader','']
     },
     debug: !production,
-    devtool: production ? false : '[inline-]source-map'
+    devtool: production ? false : 'eval'
 }
 var srcDir = path.resolve(__dirname,'./src')
 initPlugins(config)

@@ -1,6 +1,9 @@
 package blogC
 
 import (
+	"net/http"
+	"strconv"
+
 	"github.com/asaskevich/govalidator"
 	"github.com/astaxie/beego/session"
 	"github.com/caoyongzheng/gotest/env"
@@ -13,8 +16,6 @@ import (
 	"github.com/martini-contrib/binding"
 	"github.com/martini-contrib/render"
 	"gopkg.in/mgo.v2/bson"
-	"net/http"
-	"strconv"
 )
 
 func init() {
@@ -28,7 +29,7 @@ func init() {
 
 //NewBlog 新建博客
 func NewBlog(b blogM.Blog, sess session.Store, r render.Render) {
-	u := sess.Get("user").(*userM.User)
+	u := sess.Get("user").(userM.User)
 	b.UserID = u.ID
 	b.AuthorName = u.Name
 	err := blogM.Add(b)
@@ -136,7 +137,7 @@ func verifyPutBlog(b blogM.Blog, r render.Render, sess session.Store) {
 		r.JSON(200, model.NewResult(false, 0, "博客不存在，修改失败", nil))
 		return
 	}
-	if originBlog.UserID != sess.Get("user").(*userM.User).ID {
+	if originBlog.UserID != sess.Get("user").(userM.User).ID {
 		r.JSON(http.StatusForbidden, model.NewResult(false, 0, "没权权限修改博客博客", nil))
 		return
 	}

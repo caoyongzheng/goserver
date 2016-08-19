@@ -1,15 +1,17 @@
 import R from 'R'
 
 module.exports = {
-  path: R.my,
+  path: R.My,
   getComponent(nextState, cb) {
     require.ensure([], (require) => {
       cb(null, require('./My'))
     })
   },
-  indexRoute: { onEnter: (nextState, replace) => replace(R.novels) },
+  indexRoute: { onEnter: (nextState, replace) => replace(R.MyNovelList) },
   childRoutes: [
-    require('./routes/novels'),
+    require('./routes/NovelList'),
     require('./routes/addnovel'),
+    require('./routes/NovelEdit'),
+    require('./routes/NovelSectionEdit'),
   ],
 }

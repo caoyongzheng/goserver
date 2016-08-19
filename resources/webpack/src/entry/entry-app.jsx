@@ -1,8 +1,25 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Router, hashHistory } from 'react-router'
+import { Store, GlobalStores } from 'react-app-store'
 import 'Notify'
 import App from './apps/App.jsx'
+import actionFactorys from './actions'
+
+GlobalStores.add('App', new Store({
+  state: {
+    user: {},
+    loginState: '',
+  },
+  data: {
+    loginStates: {
+      LOGIN: 'login',
+      LOGOUT: 'logout',
+    },
+  },
+  actionFactorys,
+}))
+GlobalStores.get('App').actions.login()
 
 const AppRoute = {
   path: '/',

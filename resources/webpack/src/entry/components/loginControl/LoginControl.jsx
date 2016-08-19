@@ -1,15 +1,12 @@
 import React, { PropTypes, Component } from 'react'
 import { withRouter } from 'react-router'
 
-import _ from 'lodash'
 import css from './LoginControl.scss'
 import cx from 'classnames'
 import DefaultHeaderIcon from 'DefaultHeaderIcon'
 import icons from './icons.json'
 import Login from 'Login'
 import SvgIcon from 'SvgIcon'
-import { signOut, getUser } from 'LoginAction'
-import { connect } from 'StateStores'
 import { uploadImage } from 'ImageAction'
 import { imageURL } from 'PathUtil'
 import { setHeaderIcon } from 'UserAction'
@@ -34,21 +31,18 @@ class LoginControl extends Component {
     e.stopPropagation()
     Login.showSignUp()
   }
-  clickMyBlog = (userId) => {
-    this.props.router.push({ pathname: '/blog/user', query: { userId } })
-  }
   handleFile = (e) => {
     const file = e.target.files[0]
     const successHandle = (result) => setHeaderIcon(result.data, {
-      successHandle: () => getUser(),
+      successHandle: () => this.props.login(),
       failHandle: (r) => $.notify(r.desc),
     })
     const failHandle = (result) => $.notify(result.desc)
     const errHandle = (err) => $.notify(err)
     uploadImage(file, { successHandle, failHandle, errHandle })
   }
-  renderLoginBars = (user) => {
-    if (_.isUndefined(user) || !_.isEmpty(user)) {
+  renderLoginBars = (loginState, store) => {
+    if (loginState !== store.getData().loginStates.LOGOUT) {
       return null
     }
     return (
@@ -58,8 +52,8 @@ class LoginControl extends Component {
       </div>
     )
   }
-  renderUserInfo = (user, hide) => {
-    if (_.isEmpty(user)) {
+  renderUserInfo = (user, loginState, store, hide) => {
+    if (loginState !== store.getData().loginStates.LOGIN) {
       return null
     }
     return (
@@ -88,20 +82,19 @@ class LoginControl extends Component {
             </a>
           </div>
           <ul className={cx(css.dropdown, { [css.hide]: hide })}>
-            <li onClick={() => this.clickMyBlog(user.id)}>{'我的博客'}</li>
-            <li onClick={signOut}>{'登出'}</li>
+            <li onClick={this.props.logout}>{'登出'}</li>
           </ul>
         </li>
       </ul>
     )
   }
   render() {
-    const { style, user } = this.props
+    const { style, user, loginState, store } = this.props
     const { hide } = this.state
     return (
       <div style={style}>
-        {this.renderLoginBars(user)}
-        {this.renderUserInfo(user, hide)}
+        {this.renderLoginBars(loginState, store)}
+        {this.renderUserInfo(user, loginState, store, hide)}
       </div>
     )
   }
@@ -109,8 +102,10 @@ class LoginControl extends Component {
 
 LoginControl.propTypes = {
   user: PropTypes.object,
+  loginState: PropTypes.string,
+  login: PropTypes.func.isRequired,
+  logout: PropTypes.func.isRequired,
+  store: PropTypes.object.isRequired,
 }
-const propsFn = (state) => ({
-  user: state.user,
-})
-export default withRouter(connect('app', { propsFn }, LoginControl))
+
+export default withRouter(LoginControl)

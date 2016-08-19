@@ -1,6 +1,9 @@
 package blogCommentC
 
 import (
+	"net/http"
+	"strconv"
+
 	"github.com/astaxie/beego/session"
 	"github.com/caoyongzheng/gotest/env"
 	"github.com/caoyongzheng/gotest/model"
@@ -11,8 +14,6 @@ import (
 	"github.com/go-martini/martini"
 	"github.com/martini-contrib/binding"
 	"github.com/martini-contrib/render"
-	"net/http"
-	"strconv"
 )
 
 func init() {
@@ -30,7 +31,7 @@ type PostComment struct {
 
 //AddComment 添加评论
 func AddComment(pc PostComment, sess session.Store, r render.Render, req *http.Request) {
-	u := sess.Get("user").(*userM.User)
+	u := sess.Get("user").(userM.User)
 	pc.UserID = u.ID
 	newC, err := blogCommentM.AddCommont(pc.BlogID, pc.Comment)
 	if err != nil {

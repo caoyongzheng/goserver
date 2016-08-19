@@ -1,10 +1,11 @@
 package auth
 
 import (
+	"net/http"
+
 	"github.com/astaxie/beego/session"
 	"github.com/caoyongzheng/gotest/services/user/model/user"
 	"github.com/go-martini/martini"
-	"net/http"
 )
 
 //Less 权限小于或等于role,则通过
@@ -13,7 +14,7 @@ func Less(role int) martini.Handler {
 		u := sess.Get("user")
 		var userRole int
 		if u != nil {
-			userRole = u.(*userM.User).Role
+			userRole = u.(userM.User).Role
 		}
 		if userRole <= role {
 			return
@@ -28,7 +29,7 @@ func Great(role int) martini.Handler {
 		u := sess.Get("user")
 		var userRole int
 		if u != nil {
-			userRole = u.(*userM.User).Role
+			userRole = u.(userM.User).Role
 		}
 		if userRole >= role {
 			return
@@ -43,7 +44,7 @@ func Forbidden(role int) martini.Handler {
 		u := sess.Get("user")
 		var userRole int
 		if u != nil {
-			userRole = u.(*userM.User).Role
+			userRole = u.(userM.User).Role
 		}
 		if userRole != role {
 			return

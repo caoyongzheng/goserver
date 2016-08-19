@@ -9,7 +9,7 @@ function initPlugins(config) {
     new webpack.optimize.CommonsChunkPlugin({
         name: 'vendor',
         filename: "js/vendor.bundle.js",
-        minChunks: Infinity
+        minChunks: 10
     }),
     new ExtractPlugin("css/[name].bundle.css"),
     new webpack.ProvidePlugin({

@@ -5,7 +5,7 @@ import BlogView from 'BlogView'
 import Comments from './components/comments/Comments'
 import { getBlog } from '../../actions/blogAction'
 import { withRouter } from 'react-router'
-
+import { GlobalStores, Provider } from 'react-app-store'
 import css from './View.scss'
 
 class View extends React.Component {
@@ -32,7 +32,16 @@ class View extends React.Component {
     return (
       <div name="viewStage" className={css.viewStage}>
         <BlogContainer>
-          <BlogView blog={blog} />
+          <Provider
+            Component={BlogView}
+            props={{ blog }}
+            connects={
+              [{
+                store: GlobalStores.get('App'),
+                propsFn: (state) => ({ user: state.user }),
+              }]
+            }
+          />
           <div name="comments-conatiner" className={css.comments}>
             <Comments blogId={location.query.blogId} getBlog={this.getBlog} />
           </div>
