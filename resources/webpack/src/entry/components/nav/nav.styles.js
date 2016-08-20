@@ -9,6 +9,7 @@ const styles = {
     backgroundColor: '#ffffff',
     padding: '0 45px',
     color: '#000000',
+    display: 'flex',
   },
   link: {
     textDecoration: 'initial',

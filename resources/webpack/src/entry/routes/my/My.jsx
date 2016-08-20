@@ -27,7 +27,6 @@ class My extends React.Component {
           </div>
           <div name={"right"} style={{ flex: 1 }}>
             <Provider
-              Component={My}
               props={{ store: GlobalStores.get('My') }}
               connects={[
                 {

@@ -8,18 +8,15 @@ import actionFactorys from './actions'
 
 GlobalStores.add('App', new Store({
   state: {
-    user: {},
-    loginState: '',
+    logStatus: '', // 登录状态, oneOf ['LOGIN', 'LOGOUT'],
+    signModalDisplay: 'None', // 登录Modal显示状态, oneOf ['None', 'SignIn', 'SignOut']
   },
   data: {
-    loginStates: {
-      LOGIN: 'login',
-      LOGOUT: 'logout',
-    },
+    user: {}, //当前会话用户信息
   },
   actionFactorys,
 }))
-GlobalStores.get('App').actions.login()
+GlobalStores.get('App').actions.onLogin()
 
 const AppRoute = {
   path: '/',

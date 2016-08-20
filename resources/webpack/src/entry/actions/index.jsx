@@ -1,3 +1,3 @@
 import AuthActions from './AuthActions'
-
-export default [AuthActions]
+import SignModalActions from './SignModalActions'
+export default [AuthActions, SignModalActions]
