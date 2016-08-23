@@ -13,6 +13,7 @@ export default function App({ children }) {
           {
             store: GlobalStores.get('App'),
             propsFn: ({ signModalDisplay }) => ({ signModalDisplay }),
+            linkStates: ['signModalDisplay'],
             actionsFn: (actions) => ({ onSignModalDisplay: actions.onSignModalDisplay }),
           },
         ]}

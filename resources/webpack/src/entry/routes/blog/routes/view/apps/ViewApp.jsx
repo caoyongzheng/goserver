@@ -1,16 +1,15 @@
 import React, { PropTypes } from 'react'
-
 import Comments from '../components/comments/Comments'
 import { withRouter } from 'react-router'
-import css from './View.scss'
-import ViewBox from '../components/ViewBox'
+import css from './ViewApp.scss'
+import BlogView from '../components/BlogView'
 import marked from 'Marked'
 import { imageURL } from 'PathUtil'
 import DefaultHeaderIcon from 'DefaultHeaderIcon'
-import { Store, Provider } from 'react-app-store'
+import { Store, Provider, GlobalStores } from 'react-app-store'
 import actionFactorys from '../actions'
 
-class View extends React.Component {
+class ViewApp extends React.Component {
   constructor(props) {
     super(props)
     this.store = new Store({
@@ -30,12 +29,13 @@ class View extends React.Component {
     return (
       <div name="viewStage" className={css.viewStage}>
         <Provider
-          Component={ViewBox}
+          Component={BlogView}
           connects={[
             {
               store: this.store,
               propsFn: ({ blog }) =>
                 ({
+                  id: blog._id,
                   title: blog.title,
                   html: marked(blog.content || ''),
                   authorName: blog.authorName,
@@ -43,18 +43,27 @@ class View extends React.Component {
                   viewTimes: blog.viewTimes,
                   commentSize: blog.commentSize,
                   time: blog.updateDate,
+                  userId: blog.userId,
                 }),
+              linkStates: ['blog'],
+            },
+            {
+              store: GlobalStores.get('App'),
+              propsFn({ user }) {
+                return { currentUserId: user.id }
+              },
+              linkStates: ['user'],
             },
           ]}
         />
         <div className={css.comments}>
-          <Comments blogId={location.query.blogId} getBlog={this.getBlog} />
+          <Comments blogId={location.query.blogId} />
         </div>
       </div>
     )
   }
 }
-View.propTypes = {
+ViewApp.propTypes = {
   location: PropTypes.object.isRequired,
 }
-module.exports = withRouter(View)
+module.exports = withRouter(ViewApp)

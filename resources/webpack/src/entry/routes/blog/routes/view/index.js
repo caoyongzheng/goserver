@@ -4,7 +4,7 @@ module.exports = {
   path: R.BlogView,
   getComponent(nextState, cb) {
     require.ensure([], (require) => {
-      cb(null, require('./apps/View'))
+      cb(null, require('./apps/ViewApp'))
     })
   },
 }

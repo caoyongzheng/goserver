@@ -51,7 +51,7 @@ class LoginControl extends Component {
       </div>
     )
   }
-  renderUserInfo = (user, logStatus, hide) => {
+  renderUserInfo = (headerIcon, name, logStatus, hide) => {
     if (logStatus !== 'LOGIN') {
       return null
     }
@@ -60,7 +60,7 @@ class LoginControl extends Component {
         <li ref="userInfo" className={css.item} onMouseLeave={() => this.setHide(true)}>
           <a className={css.item}>
             <img
-              src={imageURL(user.headerIcon) || DefaultHeaderIcon}
+              src={imageURL(headerIcon) || DefaultHeaderIcon}
               className={css.headerImg}
               alt="userIcon"
             />
@@ -74,7 +74,7 @@ class LoginControl extends Component {
           </a>
           <div className={css.item} onClick={() => this.setHide(false)}>
             <a className={css.item}>
-              {user.name}
+              {name}
             </a>
             <a className={css.item} style={{ padding: '5px' }}>
               <SvgIcon {...icons.arrowDown} />
@@ -95,18 +95,20 @@ class LoginControl extends Component {
     )
   }
   render() {
-    const { style, logStatus, store } = this.props
+    const { style, logStatus, headerIcon, name } = this.props
     const { hide } = this.state
     return (
       <div style={style}>
         {this.renderLoginBars(logStatus)}
-        {this.renderUserInfo(store.data.user, logStatus, hide)}
+        {this.renderUserInfo(headerIcon, name, logStatus, hide)}
       </div>
     )
   }
 }
 
 LoginControl.propTypes = {
+  headerIcon: PropTypes.string,
+  name: PropTypes.string,
   logStatus: PropTypes.string,
   onLogin: PropTypes.func.isRequired,
   onLogout: PropTypes.func.isRequired,

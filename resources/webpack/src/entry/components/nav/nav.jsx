@@ -6,6 +6,17 @@ import { Provider, GlobalStores } from 'react-app-store'
 import R from 'R'
 import styles, { ACTIVE } from './nav.styles.js'
 
+function myLink() {
+  // if (logStatus === 'LOGIN') {
+  //   return (
+  //     <Link to={R.My} activeStyle={ACTIVE} style={styles.link}>
+  //       My
+  //     </Link>
+  //   )
+  // }
+  return null
+}
+
 export default function Nav() {
   return (
     <nav style={styles.nav}>
@@ -14,20 +25,12 @@ export default function Nav() {
           blog
         </Link>
         <Provider
-          Component={({ logStatus }) => {
-            if (logStatus === 'LOGIN') {
-              return (
-                <Link to={R.My} activeStyle={ACTIVE} style={styles.link}>
-                  My
-                </Link>
-              )
-            }
-            return null
-          }}
+          Component={myLink}
           connects={[
             {
               store: GlobalStores.get('App'),
               propsFn: ({ logStatus }) => ({ logStatus }),
+              linkStates: ['logStatus'],
             },
           ]}
         />
@@ -39,7 +42,9 @@ export default function Nav() {
         connects={[
           {
             store: GlobalStores.get('App'),
-            propsFn: ({ logStatus }) => ({ logStatus }),
+            propsFn: ({ logStatus, user }) =>
+            ({ logStatus, headerIcon: user.headerIcon, name: user.name }),
+            linkStates: ['logStatus', 'user'],
             actionsFn: (actions) => ({
               onLogin: actions.onLogin,
               onLogout: actions.onLogout,

@@ -10,10 +10,8 @@ import R from 'R'
 GlobalStores.add('App', new Store({
   state: {
     logStatus: '', // 登录状态, oneOf ['LOGIN', 'LOGOUT'],
-    signModalDisplay: 'None', // 登录Modal显示状态, oneOf ['None', 'SignIn', 'SignOut']
-  },
-  data: {
-    user: {}, //当前会话用户信息
+    signModalDisplay: 'None', // 登录Modal显示状态, oneOf ['None', 'SignIn', 'SignOut'],
+    user: {}, // 当前会话用户信息
   },
   actionFactorys,
 }))
