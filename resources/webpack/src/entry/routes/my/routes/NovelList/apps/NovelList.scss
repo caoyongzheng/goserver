@@ -1,0 +1,24 @@
+.stage {}
+.controlPanel {
+    margin: 10px 15px;
+    padding: 8px;
+}
+.novelList {
+    margin: 10px 20px;
+}
+.novel {
+    display: flex;
+    margin-top: -1px;
+}
+.novel:last-child {
+    margin-top: 0;
+}
+.rowCell {
+    flex: 1;
+    padding: 4px 6px;
+    border: solid 1px #ddd;
+    margin-left: -1px;
+}
+.rowCell:first-child {
+    margin-left: 0;
+}

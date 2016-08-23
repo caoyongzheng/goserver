@@ -1,16 +1,16 @@
+import R from 'R'
 module.exports = {
-  path: 'blog',
+  path: R.Blog,
   getComponent(nextState, cb) {
     require.ensure([], (require) => {
-      cb(null, require('./blog'))
+      cb(null, require('./apps/BlogApp'))
     })
   },
-  indexRoute: { onEnter: (nextState, replace) => replace('/blog/home') },
+  indexRoute: { onEnter: (nextState, replace) => replace(R.BlogIndex) },
   childRoutes: [
-    require('./routes/add/index'),
-    require('./routes/edit/index'),
-    require('./routes/home/index'),
-    require('./routes/view/index'),
-    require('./routes/myblog/index'),
+    require('./routes/add'),
+    require('./routes/edit'),
+    require('./routes/Index'),
+    require('./routes/view'),
   ],
 }

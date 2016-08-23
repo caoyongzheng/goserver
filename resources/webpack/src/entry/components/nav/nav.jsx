@@ -10,16 +10,7 @@ export default function Nav() {
   return (
     <nav style={styles.nav}>
       <div name="navItems" style={{ overflow: 'auto', display: 'flex' }}>
-        <Link to={R.home} activeStyle={ACTIVE} style={styles.link}>
-          home
-        </Link>
-        <Link to={R.demos} activeStyle={ACTIVE} style={styles.link}>
-          demo
-        </Link>
-        <Link to={R.videoView} activeStyle={ACTIVE} style={styles.link}>
-          video
-        </Link>
-        <Link to={R.blog} activeStyle={ACTIVE} style={styles.link}>
+        <Link to={R.Blog} activeStyle={ACTIVE} style={styles.link}>
           blog
         </Link>
         <Provider
@@ -60,3 +51,15 @@ export default function Nav() {
     </nav>
   )
 }
+
+/*
+<Link to={R.home} activeStyle={ACTIVE} style={styles.link}>
+  home
+</Link>
+<Link to={R.demos} activeStyle={ACTIVE} style={styles.link}>
+  demo
+</Link>
+<Link to={R.videoView} activeStyle={ACTIVE} style={styles.link}>
+  video
+</Link>
+ */

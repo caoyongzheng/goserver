@@ -61,7 +61,6 @@ class Comments extends React.Component {
       if (result.success) {
         const { size, pagesize } = this.state
         this.setCurrentPage(this.getPages(size + 1, pagesize))
-        this.props.getBlog()
         return
       }
       $.notify(result.desc)
@@ -114,6 +113,5 @@ class Comments extends React.Component {
 }
 Comments.propTypes = {
   blogId: PropTypes.string.isRequired,
-  getBlog: PropTypes.func.isRequired,
 }
 export default Comments

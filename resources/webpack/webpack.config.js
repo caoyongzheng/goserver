@@ -62,7 +62,7 @@ var config = {
       loaderPostfixes:['-loader','']
     },
     debug: !production,
-    devtool: production ? false : 'eval'
+    devtool: production ? false : 'eval',
 }
 var srcDir = path.resolve(__dirname,'./src')
 initPlugins(config)

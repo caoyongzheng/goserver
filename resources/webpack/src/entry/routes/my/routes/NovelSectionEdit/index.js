@@ -4,7 +4,7 @@ module.exports = {
   path: R.MyNovelSectionEdit,
   getComponent(nextState, cb) {
     require.ensure([], (require) => {
-      cb(null, require('./NovelSectionEdit'))
+      cb(null, require('./apps/NovelSectionEditApp'))
     })
   },
 }

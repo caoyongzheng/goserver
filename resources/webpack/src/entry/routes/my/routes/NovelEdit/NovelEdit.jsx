@@ -5,8 +5,9 @@ import { withRouter } from 'react-router'
 import R from 'R'
 
 class NovelEdit extends React.Component {
-  componentDidMount() {
-    const { location, store } = this.props
+  constructor(props) {
+    super(props)
+    const { location, store } = props
     const { novelId } = location.query
     if (_.isEmpty(novelId)) {
       return
@@ -15,7 +16,7 @@ class NovelEdit extends React.Component {
   }
   onAddSection = (novelId) => {
     this.props.router.push({
-      pathname: R.NovelSectionEdit,
+      pathname: R.MyNovelSectionAdd,
       query: { novelId },
     })
   }
@@ -41,7 +42,7 @@ class NovelEdit extends React.Component {
             ))
           }
           <div>
-            <Button>{'新增'}</Button>
+            <Button onClick={() => this.onAddSection(novelId)}>{'新增'}</Button>
           </div>
         </div>
       </div>

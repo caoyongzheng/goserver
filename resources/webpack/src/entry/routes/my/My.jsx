@@ -27,15 +27,10 @@ class My extends React.Component {
           </div>
           <div name={"right"} style={{ flex: 1 }}>
             <Provider
-              props={{ store: GlobalStores.get('My') }}
+              props={{ store: GlobalStores.get('My'), appStore: GlobalStores.get('App') }}
               connects={[
-                {
-                  store: GlobalStores.get('App'),
-                  propsFn: (state) => ({ user: state.user }),
-                },
-                {
-                  store: GlobalStores.get('My'),
-                },
+                { store: GlobalStores.get('App') },
+                { store: GlobalStores.get('My') },
               ]}
             >
               {children}

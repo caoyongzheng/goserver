@@ -1,6 +1,7 @@
 import _ from 'lodash'
+import C from './Consants'
 
-function NovelActionFactory({ setData }) {
+function NovelActionFactory({ dispatch }) {
   function getMyNovels(userId) {
     $.ajax({
       url: `/api/novel/userId/${userId}`,
@@ -9,7 +10,10 @@ function NovelActionFactory({ setData }) {
         _.forEach(novels, (novel) => {
           novelObj[novel.id] = novel
         })
-        setData({ novels: novelObj })
+        dispatch({
+          type: C.GetMyNovels,
+          data: { novels: novelObj },
+        })
       },
     })
   }
@@ -19,8 +23,9 @@ function NovelActionFactory({ setData }) {
       success: (result) => {
         const { success, data, desc } = result
         if (success) {
-          setData({
-            novels: { [data.id]: data }
+          dispatch({
+            type: C.GetNovelCatalog,
+            data: { novels: { [data.id]: data } }
           })
         } else {
           $.notify(desc)

@@ -1,6 +1,8 @@
 package static
 
 import (
+	"net/http"
+
 	"github.com/caoyongzheng/gotest/env"
 	"github.com/go-martini/martini"
 	"github.com/martini-contrib/render"
@@ -8,7 +10,10 @@ import (
 
 func init() {
 	//html
-	env.Router.Get("/", func(r render.Render) {
+	env.Router.Get("/", func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "/app/", http.StatusMovedPermanently)
+	})
+	env.Router.Get("/app/**", func(r render.Render) {
 		r.HTML(200, "app", nil)
 	})
 	//webfront js,css,image etc.

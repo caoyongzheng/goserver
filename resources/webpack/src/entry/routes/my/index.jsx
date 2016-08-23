@@ -12,6 +12,7 @@ module.exports = {
     require('./routes/NovelList'),
     require('./routes/addnovel'),
     require('./routes/NovelEdit'),
+    require('./routes/NovelSectionAdd'),
     require('./routes/NovelSectionEdit'),
   ],
 }

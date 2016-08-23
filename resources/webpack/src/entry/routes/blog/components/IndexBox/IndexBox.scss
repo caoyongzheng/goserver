@@ -1,0 +1,39 @@
+.indexBox {
+    position: relative;
+    background-color: #fff;
+    color: #000;
+    border: 1px solid rgb(222, 232, 239);
+    box-shadow: rgba(0, 0, 0, 0.0784314) 1px 1px 2px;
+    padding: 20px 40px;
+    max-width: 900px;
+    margin: 40px auto;
+}
+.header {
+    margin-top: 5px;
+    margin-bottom: 20px;
+}
+.header a {
+    color: rgb(0, 120, 201);
+    font-size: 24px;
+    text-decoration: none;
+    cursor: pointer;
+}
+.body p {
+    font-size: 14px;
+    color: rgb(74, 74, 74);
+}
+.body p:hover {
+    color: rgb(0, 0, 0);
+}
+.footer {
+    color: rgb(120, 120, 120);
+    font-size: 14px;
+    margin-top: 20px;
+}
+.headerIcon {
+    border-radius: 50%;
+}
+.footer > * {
+    display: inline-block;
+    vertical-align: middle;
+}
