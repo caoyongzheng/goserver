@@ -38,7 +38,7 @@ export default function delBlogPopupActions({ dispatch, getState }) {
   }
 
   function delBlog() {
-    const blogId = getState().delBlog._id
+    const blogId = getState().delBlog.id
     if (!blogId) {
       $.notify('falid to delete blog, con not find blogId')
       return
