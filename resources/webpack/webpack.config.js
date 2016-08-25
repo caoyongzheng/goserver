@@ -18,7 +18,7 @@ var config = {
       path: './assets',
       filename: 'js/[name].bundle.js',
       chunkFilename: 'js/[chunkhash].chunk.js',
-      publicPath: production?'assets/':'http://localhost:3001/assets/',
+      publicPath: production?'/assets/':'http://localhost:3001/assets/',
     },
     module: {
       preLoaders: [{
