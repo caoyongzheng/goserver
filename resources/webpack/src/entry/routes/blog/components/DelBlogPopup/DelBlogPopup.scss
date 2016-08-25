@@ -1,0 +1,104 @@
+.cover {
+    background-color: rgba(0, 0, 0, 0.4);
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    z-index: 10;
+    top: 0;
+    left: 0;
+    overflow: auto;
+}
+.show {
+    display: block;
+}
+.hide {
+    display: none;
+}
+.dialog {
+    background-color: #fff;
+    min-height: 80px;
+    position: relative;
+    margin: 180px auto;
+    width: 450px;
+    box-shadow: 0 0 18px rgba(0, 0, 0, 0.60);
+}
+.header {
+    height: 60px;
+    line-height: 60px;
+    position: relative;
+    padding: 0 15px;
+}
+.closePosition {
+    position: absolute;
+    right: 0;
+    display: inline-block;
+}
+.closeIconWrap {
+    padding: 15px;
+    vertical-align: middle;
+    cursor: pointer;
+    right: 0;
+}
+.close {
+    fill: rgb(156, 156, 156);
+}
+.closeIconWrap:hover .close {
+    fill: rgb(0, 0, 0);
+}
+.warnBanner {
+    color: #796620;
+    background-color: #f8eec7;
+    border-color: #f2e09a;
+    border-style: solid;
+    border-width: 1px 0;
+    padding: 10px 15px;
+}
+.form {
+    position: relative;
+}
+.confirmTitleLabel {
+    padding: 10px 0;
+    display: block;
+}
+.confirmTitleInput {
+    font-size: 16px;
+    padding: 4px 5px;
+    height: 36px;
+    width: 100%;
+    outline: none;
+    border: 1px solid #ddd;
+}
+.confirmTitleInput:focus {
+    border: 1px solid #51a7e8;
+}
+.footer {
+    margin-top: 10px;
+    position: relative;
+    padding: 0 15px 15px;
+}
+.deleteButton {
+    margin-top: 15px;
+    margin-bottom: 10px;
+    height: 36px;
+    line-height: 32px;
+    font-size: 16px;
+    font-weight: bold;
+    width: 100%;
+    text-align: center;
+    border: solid 1px #ddd;
+    letter-spacing: 2px;
+}
+.disable {
+    border: 1px solid #ddd;
+    color: #cb7f7f;
+    background-color: #f9f9f9;
+}
+.success {
+    color: #900;
+    cursor: pointer;
+    background-color: #fff;
+}
+.success:hover {
+    color: #fff;
+    background-color: #900;
+}

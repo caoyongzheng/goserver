@@ -11,9 +11,8 @@ import (
 	"github.com/astaxie/beego/session"
 	"github.com/caoyongzheng/gotest/env"
 	"github.com/caoyongzheng/gotest/model"
-	"github.com/caoyongzheng/gotest/services/blog/entity"
+	"github.com/caoyongzheng/gotest/model/entity"
 	"github.com/caoyongzheng/gotest/services/user/auth"
-	"github.com/caoyongzheng/gotest/services/user/model/user"
 	"github.com/go-martini/martini"
 	"github.com/martini-contrib/binding"
 	"github.com/martini-contrib/render"
@@ -21,10 +20,12 @@ import (
 
 func init() {
 	env.Router.Group("/api/blog", func(r martini.Router) {
-		r.Post("/new", auth.Great(1), binding.Bind(entity.Blog{}), verifyNewBlog, NewBlog)
+		r.Post("/new", auth.Great(entity.Normal), binding.Bind(entity.Blog{}), verifyNewBlog, NewBlog)
 		r.Get("/page", GetBlogPage)
 		r.Get("", GetBlog)
-		r.Put("", auth.Great(1), binding.Bind(entity.Blog{}), verifyPutBlog, PutBlog)
+		r.Put("", auth.Great(entity.Normal), binding.Bind(entity.Blog{}), verifyPutBlog, PutBlog)
+		r.Delete("", auth.Great(entity.Normal), delBlog)
+		r.Get("/user", getUserBlog)
 	})
 }
 
@@ -32,9 +33,9 @@ type Result map[string]interface{}
 
 //NewBlog 新建博客
 func NewBlog(b entity.Blog, sess session.Store, r render.Render) {
-	u := sess.Get("user").(userM.User)
+	u := sess.Get("user").(entity.User)
 	b.UserID = u.ID
-	b.AuthorName = u.Name
+	b.AuthorName = u.Username
 	err := entity.Add(b)
 	if err != nil {
 		r.JSON(200, model.NewResult(false, 0, "新建博客失败", nil))
@@ -81,29 +82,34 @@ func GetBlogPage(req *http.Request, r render.Render, mgoOp *env.MgoOp) {
 	}
 
 	// 2. 查询blog对应分页数据([]Blog)，获取每一博文对应user数据(name, headerIcon),然后和博文组合返回
-	var blogPage []Result //博客分页
-	var total int         //博文总的条数
+	var blogElems []struct {
+		entity.Blog `bson:",inline"`
+		AuthorIcon  string `json:"authorIcon"`
+		AuthorName  string `json:"authorName"`
+		CommentSize int    `json:"commentSize"`
+	}
+	var total int //博文总的条数
 	mgoOp.WithC("Blog", func(c *mgo.Collection) {
 		total, err = c.Find(nil).Count()
-		err = c.Find(nil).Skip((page - 1) * pagesize).Limit(pagesize).All(&blogPage) //获取分页数据
+		err = c.Find(nil).Skip((page - 1) * pagesize).Limit(pagesize).All(&blogElems) //获取分页数据
 		if err != nil {
 			r.JSON(200, Result{"success": false, "desc": "获取分页数据失败", "error": err.Error()})
 			return
 		}
-		for _, b := range blogPage {
-			var u userM.User
-			var blogComment entity.BlogComment
-			c.Database.C("User").FindId(b["userId"]).One(&u)
-			c.Database.C("BlogComment").FindId(b["_id"]).Select(bson.M{
+		for _, b := range blogElems {
+			var u entity.User
+			var bc entity.BlogComment
+			c.Database.C("User").FindId(b.UserID).One(&u)
+			c.Database.C("BlogComment").FindId(b.ID).Select(bson.M{
 				"size": 1,
-			}).One(&blogComment)
-			b["authorIcon"] = u.HeaderIcon
-			b["authorName"] = u.Name
-			b["commentSize"] = blogComment.Size
+			}).One(&bc)
+			b.AuthorIcon = u.HeaderIcon
+			b.AuthorName = u.Username
+			b.CommentSize = bc.Size
 		}
 	})
 
-	r.JSON(200, Result{"success": true, "desc": "获取分页数据成功", "elements": blogPage, "total": total})
+	r.JSON(200, Result{"success": true, "desc": "获取分页数据成功", "elements": blogElems, "total": total})
 	return
 }
 
@@ -115,19 +121,26 @@ func GetBlog(req *http.Request, r render.Render, mgoOp *env.MgoOp) {
 		return
 	}
 	entity.UpdateViews(blogID)
-	var data Result
+	var blogElem struct {
+		entity.Blog `bson:",inline"`
+		AuthorIcon  string `json:"authorIcon"`
+		AuthorName  string `json:"authorName"`
+		CommentSize int    `json:"commentSize"`
+	}
 	var err error
 	mgoOp.WithC("Blog", func(c *mgo.Collection) {
-		err = c.FindId(blogID).One(&data)
+		err = c.FindId(blogID).One(&blogElem)
 	})
 	if err != nil {
 		r.JSON(200, model.NewResult(false, 0, "博客不存在", nil))
 		return
 	}
-
-	data["authorIcon"] = userM.GetByID(data["userId"].(string)).HeaderIcon
-	data["commentSize"] = entity.GetSize(blogID)
-	r.JSON(200, model.NewResult(true, 0, "获取成功", data))
+	var u entity.User
+	mgoOp.FindId("User", blogElem.UserID, &u)
+	blogElem.AuthorIcon = u.HeaderIcon
+	blogElem.AuthorName = u.Username
+	blogElem.CommentSize = entity.GetSize(blogID)
+	r.JSON(200, model.NewResult(true, 0, "获取成功", blogElem))
 }
 
 //PutBlog 修改博客（字段为：title,content）
@@ -145,7 +158,7 @@ func verifyPutBlog(b entity.Blog, r render.Render, sess session.Store) {
 		r.JSON(200, model.NewResult(false, 0, "博客不存在，修改失败", nil))
 		return
 	}
-	if originBlog.UserID != sess.Get("user").(userM.User).ID {
+	if originBlog.UserID != sess.Get("user").(entity.User).ID {
 		r.JSON(http.StatusForbidden, model.NewResult(false, 0, "没权权限修改博客博客", nil))
 		return
 	}
@@ -157,4 +170,82 @@ func verifyPutBlog(b entity.Blog, r render.Render, sess session.Store) {
 		r.JSON(200, model.NewResult(false, 0, "博客内容不能为空", nil))
 		return
 	}
+}
+
+// delBlog 完全删除博文(包括评论)
+func delBlog(req *http.Request, r render.Render, mgoOp *env.MgoOp, sess session.Store) {
+	/**
+	 * 1. 读取blogId
+	 * 2. 验证权限(当前用户是否是博文拥有者)
+	 * 3. 删除博文和评论
+	 */
+
+	// 1. 读取blogId
+	blogID := req.URL.Query().Get("blogId")
+	if blogID == "" {
+		r.JSON(200, map[string]interface{}{"success": false, "desc": "blogId不能为空"})
+		return
+	}
+
+	//验证权限(当前用户是否是博文拥有者)
+	var b entity.Blog
+	err := mgoOp.FindId("Blog", blogID, &b)
+	if err != nil {
+		r.JSON(200, map[string]interface{}{"success": false, "desc": "博文不存在", "error": err.Error()})
+		return
+	}
+	u := sess.Get("user").(entity.User)
+	if u.ID != b.UserID {
+		r.JSON(200, map[string]interface{}{"success": false, "desc": "权限不足"})
+		return
+	}
+
+	// 3. 删除博文和评论
+	mgoOp.RemoveId("Blog", blogID)
+	mgoOp.RemoveId("BlogComment", blogID)
+	r.JSON(200, map[string]interface{}{"success": true, "desc": "删除成功"})
+	return
+}
+
+func getUserBlog(req *http.Request, r render.Render, mgoOp *env.MgoOp) {
+	/**
+	 * 1. 获取userId,并校验
+	 * 2. 根据userId获取用户所有博文
+	 */
+	userId := req.URL.Query().Get("userId")
+
+	if userId == "" {
+		r.JSON(200, map[string]interface{}{"success": false, "desc": "userId不能为空"})
+		return
+	}
+
+	// 2. 根据userId获取用户所有博文
+	var userBlogs []struct {
+		entity.Blog `bson:",inline"`
+		AuthorIcon  string `json:"authorIcon"`
+		AuthorName  string `json:"authorName"`
+		CommentSize int    `json:"commentSize"`
+	}
+	var u entity.User
+	var err error
+	mgoOp.WithC("Blog", func(c *mgo.Collection) {
+		err = c.Database.C("User").FindId(userId).Select(bson.M{}).One(&u)
+		if err != nil {
+			return
+		}
+		c.Find(bson.M{"userId": userId}).All(&userBlogs)
+		for _, b := range userBlogs {
+			b.AuthorIcon = u.HeaderIcon
+			b.AuthorName = u.Username
+			var bc entity.BlogComment
+			c.Database.C("BlogComment").FindId(b.ID).Select(bson.M{"size": 1}).One(&bc)
+			b.CommentSize = bc.Size
+		}
+	})
+	if err != nil {
+		r.JSON(200, map[string]interface{}{"success": false, "desc": "获取失败", "error": err.Error()})
+		return
+	}
+	r.JSON(200, map[string]interface{}{"success": true, "desc": "获取成功", "data": userBlogs})
+	return
 }

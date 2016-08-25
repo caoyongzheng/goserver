@@ -1,13 +1,14 @@
 import React, { PropTypes } from 'react'
-import Comments from '../components/comments/Comments'
 import { withRouter } from 'react-router'
-import css from './ViewApp.scss'
-import BlogView from '../components/BlogView'
+import { Store, Provider, GlobalStores } from 'react-app-store'
 import marked from 'Marked'
+import DelBlogPopup from 'DelBlogPopup'
 import { imageURL } from 'PathUtil'
 import DefaultHeaderIcon from 'DefaultHeaderIcon'
-import { Store, Provider, GlobalStores } from 'react-app-store'
+import Comments from '../components/comments/Comments'
+import BlogView from '../components/BlogView'
 import actionFactorys from '../actions'
+import css from './ViewApp.scss'
 
 class ViewApp extends React.Component {
   constructor(props) {
@@ -15,6 +16,8 @@ class ViewApp extends React.Component {
     this.store = new Store({
       state: {
         blog: {},
+        delBlogPopupShow: false,
+        confirmTitle: '',
       },
       actionFactorys,
     })
@@ -35,7 +38,7 @@ class ViewApp extends React.Component {
               store: this.store,
               propsFn: ({ blog }) =>
                 ({
-                  id: blog._id,
+                  id: blog.id,
                   title: blog.title,
                   html: marked(blog.content || ''),
                   authorName: blog.authorName,
@@ -46,6 +49,9 @@ class ViewApp extends React.Component {
                   userId: blog.userId,
                 }),
               linkStates: ['blog'],
+              actionsFn({ delBlogPopupShow }) {
+                return { onDelBlog: delBlogPopupShow }
+              },
             },
             {
               store: GlobalStores.get('App'),
@@ -59,6 +65,19 @@ class ViewApp extends React.Component {
         <div className={css.comments}>
           <Comments blogId={location.query.blogId} />
         </div>
+        <Provider
+          Component={DelBlogPopup}
+          connects={[{
+            store: this.store,
+            propsFn({ blog, delBlogPopupShow, confirmTitle }) {
+              return { blogTitle: blog.title, show: delBlogPopupShow, confirmTitle }
+            },
+            linkStates: ['blog', 'delBlogPopupShow', 'confirmTitle'],
+            actionsFn({ delBlogPopupClose, delBlog, onConfirmTitle }) {
+              return { close: delBlogPopupClose, delBlog, onConfirmTitle }
+            },
+          }]}
+        />
       </div>
     )
   }

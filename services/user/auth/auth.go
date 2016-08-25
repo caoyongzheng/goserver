@@ -4,17 +4,17 @@ import (
 	"net/http"
 
 	"github.com/astaxie/beego/session"
-	"github.com/caoyongzheng/gotest/services/user/model/user"
+	"github.com/caoyongzheng/gotest/model/entity"
 	"github.com/go-martini/martini"
 )
 
 //Less 权限小于或等于role,则通过
-func Less(role int) martini.Handler {
+func Less(role entity.UserRole) martini.Handler {
 	return func(w http.ResponseWriter, sess session.Store) {
 		u := sess.Get("user")
-		var userRole int
+		userRole := entity.Guest
 		if u != nil {
-			userRole = u.(userM.User).Role
+			userRole = u.(entity.User).Role
 		}
 		if userRole <= role {
 			return
@@ -24,12 +24,12 @@ func Less(role int) martini.Handler {
 }
 
 //Great 权限大于或等于role,则通过
-func Great(role int) martini.Handler {
+func Great(role entity.UserRole) martini.Handler {
 	return func(w http.ResponseWriter, sess session.Store) {
 		u := sess.Get("user")
-		var userRole int
+		userRole := entity.Guest
 		if u != nil {
-			userRole = u.(userM.User).Role
+			userRole = u.(entity.User).Role
 		}
 		if userRole >= role {
 			return
@@ -39,12 +39,12 @@ func Great(role int) martini.Handler {
 }
 
 //Forbidden 禁止权限为role的用户通过
-func Forbidden(role int) martini.Handler {
+func Forbidden(role entity.UserRole) martini.Handler {
 	return func(w http.ResponseWriter, sess session.Store) {
 		u := sess.Get("user")
-		var userRole int
+		userRole := entity.Guest
 		if u != nil {
-			userRole = u.(userM.User).Role
+			userRole = u.(entity.User).Role
 		}
 		if userRole != role {
 			return

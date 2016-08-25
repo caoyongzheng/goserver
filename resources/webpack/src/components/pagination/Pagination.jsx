@@ -87,10 +87,10 @@ Pagination.defaultProps = {
   onChange: () => {},
 }
 Pagination.propTypes = {
-  pages: PropTypes.number,
+  pages: PropTypes.number.isRequired,
   edges: PropTypes.number,
   displayedPages: PropTypes.number,
-  currentPage: PropTypes.number,
-  onChange: PropTypes.func,
+  currentPage: PropTypes.number.isRequired,
+  onChange: PropTypes.func.isRequired,
 }
 export default Pagination

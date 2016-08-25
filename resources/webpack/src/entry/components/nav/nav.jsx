@@ -42,8 +42,8 @@ export default function Nav() {
         connects={[
           {
             store: GlobalStores.get('App'),
-            propsFn: ({ logStatus, user }) =>
-            ({ logStatus, headerIcon: user.headerIcon, name: user.name }),
+            propsFn: ({ logStatus, user: { headerIcon, username, id } }) =>
+            ({ logStatus, headerIcon, username, userId: id }),
             linkStates: ['logStatus', 'user'],
             actionsFn: (actions) => ({
               onLogin: actions.onLogin,

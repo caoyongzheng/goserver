@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react'
 import { withRouter } from 'react-router'
 import BlogViewBox from 'BlogViewBox'
-import icons from './icons.json'
+import icons from '../../../icons.json'
 import SvgIcon from 'SvgIcon'
 import css from './BlogView.scss'
 
@@ -12,13 +12,12 @@ class BlogView extends React.Component {
   }
   render() {
     const { title, html, authorName, authorIcon,
-      viewTimes, commentSize, time, currentUserId, userId } = this.props
+      viewTimes, commentSize, time, currentUserId, userId, onDelBlog } = this.props
     const isOwner = currentUserId && userId && currentUserId === userId
     return (
       <div className={css.blogView}>
-        {
-          isOwner ? <SvgIcon {...icons.edit} onClick={this.toEditBlog} /> : null
-        }
+        {isOwner ? <SvgIcon {...icons.del} onClick={onDelBlog} /> : null}
+        {isOwner ? <SvgIcon {...icons.edit} onClick={this.toEditBlog} /> : null}
         <BlogViewBox
           title={title}
           html={html}
@@ -43,5 +42,6 @@ BlogView.propTypes = {
   time: PropTypes.string,
   userId: PropTypes.string,
   currentUserId: PropTypes.string,
+  onDelBlog: PropTypes.func.isRequired,
 }
 export default withRouter(BlogView)

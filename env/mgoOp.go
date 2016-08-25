@@ -6,15 +6,23 @@ import (
 	"gopkg.in/mgo.v2"
 )
 
+//MgoOpInst
+var MgoOpInst *MgoOp
+
+func initDB() {
+	dbIP := os.Getenv("MONGODB_PORT_27017_TCP_ADDR")
+	if dbIP == "" {
+		dbIP = GetConfig("DBIP")
+	}
+	dbUrl := dbIP + ":27017"
+	MgoOpInst = &MgoOp{url: dbUrl, name: GetConfig("DBName")}
+}
+
 // 数据库操作
 type MgoOp struct {
 	url     string
 	name    string
 	session *mgo.Session
-}
-
-func NewMgoOp(url string, name string) *MgoOp {
-	return &MgoOp{url: url, name: name}
 }
 
 func (mgoOp *MgoOp) getSession() *mgo.Session {
@@ -39,6 +47,19 @@ func (mgoOp *MgoOp) WithC(collectionName string, q func(*mgo.Collection)) {
 	defer session.Close()
 	c := session.DB(mgoOp.name).C(collectionName)
 	q(c)
+}
+
+//FindId find Document by ID
+func (mgoOp *MgoOp) FindId(collectionName string, id interface{}, result interface{}) error {
+	session := mgoOp.getSession()
+	defer session.Close()
+	return session.DB(mgoOp.name).C(collectionName).FindId(id).One(result)
+}
+
+func (mgoOp *MgoOp) RemoveId(collectionName string, id interface{}) error {
+	session := mgoOp.getSession()
+	defer session.Close()
+	return session.DB(mgoOp.name).C(collectionName).RemoveId(id)
 }
 
 var mgoSession *mgo.Session

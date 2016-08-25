@@ -1,6 +1,9 @@
 export default {
   Blog: '/app/blog',
+  BlogEdit: '/app/blog/edit',
   BlogIndex: '/app/blog/index',
+  BlogNew: '/app/blog/new',
+  BlogUserBlog: '/app/blog/user',
   BlogView: '/app/blog/view',
   demos: '/app/demos',
   home: '/app/home',

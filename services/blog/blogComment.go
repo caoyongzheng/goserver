@@ -4,12 +4,14 @@ import (
 	"net/http"
 	"strconv"
 
+	mgo "gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
+
 	"github.com/astaxie/beego/session"
 	"github.com/caoyongzheng/gotest/env"
 	"github.com/caoyongzheng/gotest/model"
-	"github.com/caoyongzheng/gotest/services/blog/entity"
+	"github.com/caoyongzheng/gotest/model/entity"
 	"github.com/caoyongzheng/gotest/services/user/auth"
-	"github.com/caoyongzheng/gotest/services/user/model/user"
 	"github.com/go-martini/martini"
 	"github.com/martini-contrib/binding"
 	"github.com/martini-contrib/render"
@@ -30,7 +32,7 @@ type PostComment struct {
 
 //AddComment 添加评论
 func AddComment(pc PostComment, sess session.Store, r render.Render, req *http.Request) {
-	u := sess.Get("user").(userM.User)
+	u := sess.Get("user").(entity.User)
 	pc.UserID = u.ID
 	newC, err := entity.AddCommont(pc.BlogID, pc.Comment)
 	if err != nil {
@@ -58,7 +60,7 @@ type Comment struct {
 }
 
 //Get 获取博客评论
-func Get(r render.Render, req *http.Request) {
+func Get(r render.Render, req *http.Request, mgoOp *env.MgoOp) {
 	blogID := req.URL.Query().Get("blogId")
 	page, _ := strconv.Atoi(req.URL.Query().Get("page"))
 	pagesize, _ := strconv.Atoi(req.URL.Query().Get("pagesize"))
@@ -66,11 +68,14 @@ func Get(r render.Render, req *http.Request) {
 	bc, _ := entity.GetPage(blogID, page, pagesize)
 	data := make(map[string]interface{})
 	comments := make([]Comment, len(bc.Comments))
-	for i, c := range bc.Comments {
-		comments[i].Comment = c
-		u := userM.GetByID(c.UserID)
+	for i, ct := range bc.Comments {
+		comments[i].Comment = ct
+		var u entity.User
+		mgoOp.WithC("User", func(c *mgo.Collection) {
+			c.FindId(ct.UserID).Select(bson.M{"headerIcon": 1, "username": 1}).One(&u)
+		})
 		comments[i].HeaderIcon = u.HeaderIcon
-		comments[i].Name = u.Name
+		comments[i].Name = u.Username
 	}
 	data["size"] = bc.Size
 	data["comments"] = comments

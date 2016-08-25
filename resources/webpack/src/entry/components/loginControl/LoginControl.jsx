@@ -9,6 +9,7 @@ import SvgIcon from 'SvgIcon'
 import { uploadImage } from 'ImageAction'
 import { imageURL } from 'PathUtil'
 import { setHeaderIcon } from 'UserAction'
+import R from 'R'
 
 // LoginControl 登录控制
 class LoginControl extends Component {
@@ -51,7 +52,7 @@ class LoginControl extends Component {
       </div>
     )
   }
-  renderUserInfo = (headerIcon, name, logStatus, hide) => {
+  renderUserInfo = ({ headerIcon, username, userId, logStatus, hide }) => {
     if (logStatus !== 'LOGIN') {
       return null
     }
@@ -74,13 +75,21 @@ class LoginControl extends Component {
           </a>
           <div className={css.item} onClick={() => this.setHide(false)}>
             <a className={css.item}>
-              {name}
+              {username}
             </a>
-            <a className={css.item} style={{ padding: '5px' }}>
+            <a className={css.item}>
               <SvgIcon {...icons.arrowDown} />
             </a>
           </div>
           <ul className={cx(css.dropdown, { [css.hide]: hide })}>
+            <li
+              onClick={() => {
+                this.setHide(true)
+                this.props.router.push({ pathname: R.BlogUserBlog, query: { userId } })
+              }}
+            >
+              {'我的博文'}
+            </li>
             <li
               onClick={() => {
                 this.setHide(true)
@@ -95,20 +104,21 @@ class LoginControl extends Component {
     )
   }
   render() {
-    const { style, logStatus, headerIcon, name } = this.props
+    const { style, logStatus, headerIcon, username, userId } = this.props
     const { hide } = this.state
     return (
       <div style={style}>
         {this.renderLoginBars(logStatus)}
-        {this.renderUserInfo(headerIcon, name, logStatus, hide)}
+        {this.renderUserInfo({ headerIcon, username, userId, logStatus, hide })}
       </div>
     )
   }
 }
 
 LoginControl.propTypes = {
+  userId: PropTypes.string,
   headerIcon: PropTypes.string,
-  name: PropTypes.string,
+  username: PropTypes.string,
   logStatus: PropTypes.string,
   onLogin: PropTypes.func.isRequired,
   onLogout: PropTypes.func.isRequired,

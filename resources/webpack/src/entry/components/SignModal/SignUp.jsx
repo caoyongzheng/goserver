@@ -7,7 +7,6 @@ class SignUp extends React.Component {
   state = {
     username: '',
     password: '',
-    name: '',
   }
   handleUsername = (e) => {
     this.setState({
@@ -19,18 +18,16 @@ class SignUp extends React.Component {
       password: e.target.value,
     })
   }
-  handleName = (e) => {
-    this.setState({
-      name: e.target.value,
-    })
-  }
   handleSignUp = (e) => {
     e.preventDefault()
     e.stopPropagation()
     const user = {
       username: this.state.username,
       password: this.state.password,
-      name: this.state.name,
+    }
+    if (!user.username || !user.password) {
+      $.notify('username and password can not be empty')
+      return
     }
     const successHandle = () => {
       const { onLogin, onSignModalDisplay } = this.props
@@ -42,7 +39,7 @@ class SignUp extends React.Component {
     signUp(user, { successHandle, failHandle, errHandle })
   }
   render() {
-    const { username, password, name } = this.state
+    const { username, password } = this.state
     return (
       <form>
         <div className={css.formGroup}>
@@ -50,6 +47,7 @@ class SignUp extends React.Component {
           <input
             key={'username'}
             type="text"
+            name="username"
             placeholder={'Username...'}
             style={InputStyle.normal}
             value={username}
@@ -61,23 +59,11 @@ class SignUp extends React.Component {
           <input
             key={'password'}
             type="password"
-            name="form-password"
+            name="password"
             placeholder={'Password...'}
             style={InputStyle.normal}
             value={password}
             onChange={this.handlePassword}
-          />
-        </div>
-        <div className={css.formGroup}>
-          <label htmlFor="form-name" />
-          <input
-            key={'name'}
-            type="text"
-            name="form-name"
-            placeholder={'name...'}
-            style={InputStyle.normal}
-            value={name}
-            onChange={this.handleName}
           />
         </div>
         <div className={css.formGroup}>

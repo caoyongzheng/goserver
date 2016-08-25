@@ -2,7 +2,6 @@ package env
 
 import (
 	"net/http"
-	"os"
 
 	"github.com/astaxie/beego/session"
 	"github.com/go-martini/martini"
@@ -16,14 +15,7 @@ func initRouter() {
 	Router = martini.Classic()
 
 	// 注册全局mongo数据库服务
-	Router.Map(func() *MgoOp {
-		dbIP := os.Getenv("MONGODB_PORT_27017_TCP_ADDR")
-		if dbIP == "" {
-			dbIP = GetConfig("DBIP")
-		}
-		dbUrl := dbIP + ":27017"
-		return NewMgoOp(dbUrl, GetConfig("DBName"))
-	}())
+	Router.Map(MgoOpInst)
 
 	// 注册全局渲染器
 	Router.Use(render.Renderer(render.Options{

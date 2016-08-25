@@ -1,60 +1,100 @@
 import React from 'react'
-import css from './Index.scss'
-import BlogIndexBox from 'BlogIndexBox'
-import { imageURL } from 'PathUtil'
-import DefaultHeaderIcon from 'DefaultHeaderIcon'
+import { withRouter } from 'react-router'
+import { Provider, GlobalStores, Store } from 'react-app-store'
 import R from 'R'
+import DelBlogPopup from 'DelBlogPopup'
+import Pagination from 'Pagination'
+import css from './Index.scss'
+import BlogList from '../components/BlogList'
+import actionFactorys from '../actions'
 
 class Index extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {
-      page: 1,
-      pagesize: 10,
-      total: 0,
-      blogs: [],
-    }
-    this.getBlogPage(1, 10)
-  }
-  getBlogPage = (page, pagesize) => {
-    $.ajax({
-      url: `/api/blog/page?page=${page}&pagesize=${pagesize}`,
-      success: (result) => {
-        const { success, total, elements } = result
-        if (success) {
-          this.setState({
-            blogs: elements,
-            total,
-          })
-        } else {
-          $.notify(result.desc)
+    this.store = new Store({
+      state: {
+        page: 1,
+        pagesize: 10,
+        total: 0,
+        blogs: [],
+        delBlog: {},
+        delBlogPopupShow: false,
+        confirmTitle: '',
+      },
+      actionFactorys,
+      didDispatch: ({ type, state }) => {
+        if (type === 'DelBlog') {
+          const { page, pagesize, total } = state
+          this.store.actions.getBlogPage(
+            Math.max(1, Math.min(this.getPages(total - 1, pagesize), page)),
+            pagesize
+          )
         }
       },
     })
+    this.store.actions.getBlogPage(1, 10)
+  }
+  getPages = (total, pagesize) =>
+  Math.floor(total / pagesize) + Math.ceil(total % pagesize / pagesize)
+  toBlogEdit = (blogId) => {
+    this.props.router.push({ pathname: R.BlogEdit, query: { blogId } })
   }
   render() {
-    const { blogs } = this.state
     return (
       <div name="homeStage" className={css.homeStage}>
-        {
-          blogs.map(({ _id, title, content, authorName, authorIcon,
-            viewTimes, commentSize, updateDate }) => (
-            <BlogIndexBox
-              key={_id}
-              url={`${R.BlogView}?blogId=${_id}`}
-              title={title}
-              content={`${content.substr(0, 250)}${content.length > 250 ? '...' : ''}`}
-              authorName={authorName}
-              authorIcon={imageURL(authorIcon) || DefaultHeaderIcon}
-              viewTimes={viewTimes}
-              commentSize={commentSize}
-              time={updateDate}
-            />
-          ))
-        }
+        <Provider
+          Component={BlogList}
+          props={{ toBlogEdit: this.toBlogEdit }}
+          connects={[{
+            store: GlobalStores.get('App'),
+            propsFn({ user }) {
+              return { currentUserId: user.id }
+            },
+            linkStates: ['user'],
+          }, {
+            store: this.store,
+            propsFn({ blogs }) {
+              return { blogs }
+            },
+            linkStates: ['blogs'],
+            actionsFn({ delBlogPopupShow }) {
+              return { onDelBlog: delBlogPopupShow }
+            },
+          }]}
+        />
+        <Provider
+          Component={Pagination}
+          connects={[{
+            store: this.store,
+            propsFn: ({ total, pagesize, page }) => ({
+              currentPage: page,
+              pages: this.getPages(total, pagesize),
+              style: {
+                display: this.getPages(total, pagesize) < 2 ? 'none' : 'block',
+                textAlign: 'center',
+              },
+            }),
+            linkStates: ['total', 'pagesize', 'page'],
+            actionsFn: ({ getBlogPage }) =>
+            ({ onChange: (page) => getBlogPage(page, this.store.getState().pagesize) }),
+          }]}
+        />
+        <Provider
+          Component={DelBlogPopup}
+          connects={[{
+            store: this.store,
+            propsFn({ delBlog, delBlogPopupShow, confirmTitle }) {
+              return { blogTitle: delBlog.title, show: delBlogPopupShow, confirmTitle }
+            },
+            linkStates: ['delBlog', 'delBlogPopupShow', 'confirmTitle'],
+            actionsFn({ delBlogPopupClose, delBlog, onConfirmTitle }) {
+              return { close: delBlogPopupClose, delBlog, onConfirmTitle }
+            },
+          }]}
+        />
       </div>
     )
   }
 }
 
-module.exports = Index
+module.exports = withRouter(Index)

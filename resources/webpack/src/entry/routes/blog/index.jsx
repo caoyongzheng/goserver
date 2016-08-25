@@ -8,9 +8,10 @@ module.exports = {
   },
   indexRoute: { onEnter: (nextState, replace) => replace(R.BlogIndex) },
   childRoutes: [
-    require('./routes/add'),
-    require('./routes/edit'),
+    require('./routes/Edit'),
     require('./routes/Index'),
-    require('./routes/view'),
+    require('./routes/New'),
+    require('./routes/UserBlog'),
+    require('./routes/View'),
   ],
 }

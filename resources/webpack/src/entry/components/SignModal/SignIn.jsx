@@ -39,10 +39,11 @@ class SignIn extends React.Component {
     return (
       <form>
         <div className={css.formGroup}>
-          <label htmlFor="form-username" />
+          <label htmlFor="username" />
           <input
             key={'username'}
             type="text"
+            name="username"
             placeholder={'Username...'}
             style={InputStyle.normal}
             value={username}
@@ -50,11 +51,11 @@ class SignIn extends React.Component {
           />
         </div>
         <div className={css.formGroup}>
-          <label htmlFor="form-password" />
+          <label htmlFor="password" />
           <input
             key={'password'}
             type="password"
-            name="form-password"
+            name="password"
             placeholder={'Password...'}
             style={InputStyle.normal}
             value={password}
