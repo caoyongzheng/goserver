@@ -1,7 +1,15 @@
-.homeStage {
+.stage {
+    position: relative;
+}
+.blogList {
     max-width: 900px;
     margin: 0 auto;
     padding: 0 10px;
     position: relative;
     height: 100%;
+}
+.newBlog {
+    position: absolute;
+    top: 40px;
+    right: 40px;
 }

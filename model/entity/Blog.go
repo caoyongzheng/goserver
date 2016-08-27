@@ -38,6 +38,10 @@ type Blog struct {
 	AuthorRef   mgo.DBRef `bson:"authorRef" json:"-" form:"-"`                    //作者
 }
 
+func (b *Blog) GetCollectionName() string {
+	return "Blog"
+}
+
 //Add 新增博客
 func Add(blog Blog) (err error) {
 	blog.ID = bson.NewObjectId().Hex()

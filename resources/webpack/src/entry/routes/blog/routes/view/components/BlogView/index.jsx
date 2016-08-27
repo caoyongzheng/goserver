@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react'
 import { withRouter } from 'react-router'
 import BlogViewBox from 'BlogViewBox'
-import icons from '../../../icons.json'
+import icons from 'BlogIcons'
 import SvgIcon from 'SvgIcon'
 import css from './BlogView.scss'
 import _ from 'lodash'

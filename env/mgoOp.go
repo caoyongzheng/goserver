@@ -63,6 +63,12 @@ func (mgoOp *MgoOp) RemoveId(collectionName string, id interface{}) error {
 	return session.DB(mgoOp.name).C(collectionName).RemoveId(id)
 }
 
+func (mgoOp *MgoOp) Insert(collectionName string, docs ...interface{}) error {
+	session := mgoOp.getSession()
+	defer session.Close()
+	return session.DB(mgoOp.name).C(collectionName).Insert(docs...)
+}
+
 var mgoSession *mgo.Session
 
 //GetSession 获取连接数据库的会话

@@ -1,22 +1,26 @@
-import React from 'react'
+import React, { PropTypes } from 'react'
 import { withRouter } from 'react-router'
 import { Provider, GlobalStores, Store } from 'react-app-store'
 import R from 'R'
 import DelBlogPopup from 'DelBlogPopup'
 import Pagination from 'Pagination'
 import css from './Index.scss'
-import BlogList from '../components/BlogList'
+import BlogIndexList from 'BlogIndexList'
 import actionFactorys from '../actions'
+import NewBlogButton from 'NewBlogButton'
 
 class Index extends React.Component {
   constructor(props) {
     super(props)
     this.store = new Store({
       state: {
+        // Pagination
         page: 1,
         pagesize: 10,
         total: 0,
+        // BlogIndexList
         blogs: [],
+        // DelBlogPopup
         delBlog: {},
         delBlogPopupShow: false,
         confirmTitle: '',
@@ -25,14 +29,28 @@ class Index extends React.Component {
       didDispatch: ({ type, state }) => {
         if (type === 'DelBlog') {
           const { page, pagesize, total } = state
-          this.store.actions.getBlogPage(
+          this.getBlogs(
             Math.max(1, Math.min(this.getPages(total - 1, pagesize), page)),
-            pagesize
+            pagesize,
+            this.props.location.query,
           )
         }
       },
     })
-    this.store.actions.getBlogPage(1, 10)
+    this.getBlogs(1, 10, props.location.query)
+  }
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.location.query !== this.props.location.query) {
+      const { page, pagesize } = this.store.getState()
+      this.getBlogs(page, pagesize, nextProps.location.query)
+    }
+  }
+  getBlogs = (page, pagesize, query) => {
+    this.store.actions.getBlogPage({
+      page,
+      pagesize,
+      ...query,
+    })
   }
   getPages = (total, pagesize) =>
   Math.floor(total / pagesize) + Math.ceil(total % pagesize / pagesize)
@@ -41,27 +59,26 @@ class Index extends React.Component {
   }
   render() {
     return (
-      <div name="homeStage" className={css.homeStage}>
-        <Provider
-          Component={BlogList}
-          props={{ toBlogEdit: this.toBlogEdit }}
-          connects={[{
-            store: GlobalStores.get('App'),
-            propsFn({ user }) {
-              return { userId: user.id }
-            },
-            linkStates: ['user'],
-          }, {
-            store: this.store,
-            propsFn({ blogs }) {
-              return { blogs }
-            },
-            linkStates: ['blogs'],
-            actionsFn({ delBlogPopupShow }) {
-              return { onDelBlog: delBlogPopupShow }
-            },
-          }]}
-        />
+      <div className={css.stage}>
+        <div className={css.blogList}>
+          <Provider
+            Component={BlogIndexList}
+            props={{ toBlogEdit: this.toBlogEdit }}
+            connects={[{
+              store: GlobalStores.get('App'),
+              propsFn: ({ user }) => ({ userId: user.id }),
+              linkStates: ['user'],
+            }, {
+              store: this.store,
+              propsFn: ({ blogs }) => ({ blogs }),
+              linkStates: ['blogs'],
+              actionsFn: ({ delBlogPopupShow }) => ({ onDelBlog: delBlogPopupShow }),
+            }]}
+          />
+        </div>
+        <div className={css.newBlog}>
+          <NewBlogButton />
+        </div>
         <Provider
           Component={Pagination}
           connects={[{
@@ -95,6 +112,10 @@ class Index extends React.Component {
       </div>
     )
   }
+}
+
+Index.propTypes = {
+  location: PropTypes.object,
 }
 
 module.exports = withRouter(Index)

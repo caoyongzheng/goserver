@@ -6,6 +6,7 @@ export default function AuthActions({ dispatch }) {
       success: (result) => {
         if (result.success) {
           const user = result.data
+          user.logStatus = 'LOGIN'
           dispatch({
             type: C.Login,
             state: { logStatus: 'LOGIN', user },
@@ -13,7 +14,7 @@ export default function AuthActions({ dispatch }) {
         } else if (!result.success) {
           dispatch({
             type: C.Logout,
-            state: { logStatus: 'LOGOUT', user: {} },
+            state: { logStatus: 'LOGOUT', user: { logStatus: 'LOGOUT' } },
           })
         }
       },
@@ -26,7 +27,7 @@ export default function AuthActions({ dispatch }) {
         if (result.success) {
           dispatch({
             type: C.Logout,
-            state: { logStatus: 'LOGOUT', user: {} },
+            state: { logStatus: 'LOGOUT', user: { logStatus: 'LOGOUT' } },
           })
         } else if (!result.success) {
           $.notify(result.desc)

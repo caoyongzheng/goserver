@@ -1,12 +1,12 @@
 import React from 'react'
-
+import { withRouter } from 'react-router'
 import MDEditor from 'react-mdeditor'
 import Input from 'Input'
 import css from './New.scss'
-
-import { addBlog } from '../../actions/blogAction.jsx'
 import { uploadImage } from 'ImageAction'
 import { imageURL } from 'PathUtil'
+import R from 'R'
+import { GlobalStores } from 'react-app-store'
 
 class NewApp extends React.Component {
   state = {
@@ -26,7 +26,30 @@ class NewApp extends React.Component {
       content: this.refs.mdEditor.codeMirror.getValue(),
       contentType: 'markdown',
     }
-    addBlog(blog)
+    if (!blog.title) {
+      $.notify('blog title shouldn`t be Empty!')
+      return
+    }
+    if (!blog.content) {
+      $.notify('blog content shouldn`t be Empty!')
+      return
+    }
+    $.ajax({
+      type: 'POST',
+      url: '/api/blog/new',
+      data: blog,
+      success: (result) => {
+        if (result.success) {
+          this.props.router.push({
+            pathname: R.BlogIndex,
+            query: { userId: GlobalStores.get('App').getState().user.id },
+          })
+          $.notify(result.desc, 'success')
+        } else {
+          $.notify(result.desc)
+        }
+      },
+    })
   }
   handleImage = (e) => {
     const image = e.target.files[0]
@@ -79,4 +102,4 @@ class NewApp extends React.Component {
     )
   }
 }
-module.exports = NewApp
+module.exports = withRouter(NewApp)

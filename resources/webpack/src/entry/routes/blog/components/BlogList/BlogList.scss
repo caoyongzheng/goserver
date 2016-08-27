@@ -1,0 +1,10 @@
+.indexBoxWrap {
+    margin-bottom: 40px;
+    position: relative;
+}
+.controlIcons {
+    display: none;
+}
+.indexBoxWrap:hover .controlIcons {
+    display: block;
+}

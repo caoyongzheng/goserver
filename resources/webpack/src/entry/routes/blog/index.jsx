@@ -11,7 +11,6 @@ module.exports = {
     require('./routes/Edit'),
     require('./routes/Index'),
     require('./routes/New'),
-    require('./routes/UserBlog'),
     require('./routes/View'),
   ],
 }

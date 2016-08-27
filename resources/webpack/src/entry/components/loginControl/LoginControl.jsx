@@ -85,7 +85,7 @@ class LoginControl extends Component {
             <li
               onClick={() => {
                 this.setHide(true)
-                this.props.router.push({ pathname: R.BlogUserBlog, query: { userId } })
+                this.props.router.push({ pathname: R.BlogIndex, query: { userId } })
               }}
             >
               {'我的博文'}

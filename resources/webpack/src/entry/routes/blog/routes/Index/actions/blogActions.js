@@ -1,15 +1,16 @@
 export default function blogActions({ dispatch }) {
-  function getBlogPage(page, pagesize) {
+  function getBlogPage(query) {
     $.ajax({
-      url: `/api/blog/page?page=${page}&pagesize=${pagesize}`,
+      url: `/api/blog/page`,
+      data: query,
       success: (result) => {
         const { success, total, elements } = result
         if (success) {
           dispatch({
             type: 'GetBlogPage',
             state: {
-              page,
-              pagesize,
+              page: query.page,
+              pagesize: query.pagesize,
               total,
               blogs: elements,
             },
