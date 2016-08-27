@@ -36,3 +36,7 @@ type User struct {
 	HeaderIcon string   `bson:"headerIcon" json:"headerIcon" form:"headerIcon"`
 	Role       UserRole `bson:"role" form:"-" json:"role"`
 }
+
+func (u *User) CollectionName() string {
+	return "User"
+}

@@ -48,7 +48,7 @@ class Index extends React.Component {
           connects={[{
             store: GlobalStores.get('App'),
             propsFn({ user }) {
-              return { currentUserId: user.id }
+              return { userId: user.id }
             },
             linkStates: ['user'],
           }, {

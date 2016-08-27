@@ -7,30 +7,29 @@ import { imageURL } from 'PathUtil'
 import SvgIcon from 'SvgIcon'
 import icons from '../../../icons.json'
 
-function isOwner(currentUserId, userId) {
-  return currentUserId && currentUserId === userId
+function isOwner(userId, authorId) {
+  return userId && authorId === userId
 }
 
-class BlogIndexs extends React.Component {
+class BlogList extends React.Component {
   state = {}
   render() {
-    const { blogs, currentUserId, onDelBlog, toBlogEdit } = this.props
+    const { blogs, userId, onDelBlog, toBlogEdit } = this.props
     return (
       <div>
         {
-          _.map(blogs, ({ id, title, content, authorName, authorIcon,
-            viewTimes, commentSize, updateDate, userId }) => (
+          _.map(blogs, ({ id, title, content, author, viewTimes, commentSize, updateDate }) => (
             <div style={{ margin: '40px auto', position: 'relative' }} key={id}>
-              {isOwner(currentUserId, userId) ?
+              {isOwner(userId, author.id) ?
                 <SvgIcon {...icons.del} onClick={() => onDelBlog(id)} /> : null}
-              {isOwner(currentUserId, userId) ?
+              {isOwner(userId, author.id) ?
                 <SvgIcon {...icons.edit} onClick={() => toBlogEdit(id)} /> : null}
               <BlogIndexBox
                 url={`${R.BlogView}?blogId=${id}`}
                 title={title}
                 content={`${content.substr(0, 250)}${content.length > 250 ? '...' : ''}`}
-                authorName={authorName}
-                authorIcon={imageURL(authorIcon) || DefaultHeaderIcon}
+                authorName={author.username}
+                authorIcon={imageURL(author.headerIcon) || DefaultHeaderIcon}
                 viewTimes={viewTimes}
                 commentSize={commentSize}
                 time={updateDate}
@@ -42,10 +41,10 @@ class BlogIndexs extends React.Component {
     )
   }
 }
-BlogIndexs.propTypes = {
+BlogList.propTypes = {
   blogs: PropTypes.arrayOf(PropTypes.object),
-  currentUserId: PropTypes.string,
+  userId: PropTypes.string,
   onDelBlog: PropTypes.func.isRequired,
   toBlogEdit: PropTypes.func.isRequired,
 }
-export default BlogIndexs
+export default BlogList

@@ -34,8 +34,11 @@ type Result map[string]interface{}
 //NewBlog 新建博客
 func NewBlog(b entity.Blog, sess session.Store, r render.Render) {
 	u := sess.Get("user").(entity.User)
-	b.UserID = u.ID
-	b.AuthorName = u.Username
+	b.AuthorRef = mgo.DBRef{
+		Collection: u.CollectionName(),
+		Id:         u.ID,
+		Database:   entity.DBName,
+	}
 	err := entity.Add(b)
 	if err != nil {
 		r.JSON(200, model.NewResult(false, 0, "新建博客失败", nil))
@@ -82,29 +85,25 @@ func GetBlogPage(req *http.Request, r render.Render, mgoOp *env.MgoOp) {
 	}
 
 	// 2. 查询blog对应分页数据([]Blog)，获取每一博文对应user数据(name, headerIcon),然后和博文组合返回
-	var blogElems []struct {
+	var blogElems []*struct {
 		entity.Blog `bson:",inline"`
-		AuthorIcon  string `json:"authorIcon"`
-		AuthorName  string `json:"authorName"`
-		CommentSize int    `json:"commentSize"`
+		Author      entity.User `json:"author"`
+		CommentSize int         `json:"commentSize"`
 	}
 	var total int //博文总的条数
-	mgoOp.WithC("Blog", func(c *mgo.Collection) {
-		total, err = c.Find(nil).Count()
-		err = c.Find(nil).Skip((page - 1) * pagesize).Limit(pagesize).All(&blogElems) //获取分页数据
+	mgoOp.WithDB(func(db *mgo.Database) {
+		total, err = db.C("Blog").Find(nil).Count()
+		err = db.C("Blog").Find(nil).Skip((page - 1) * pagesize).Limit(pagesize).All(&blogElems) //获取分页数据
 		if err != nil {
 			r.JSON(200, Result{"success": false, "desc": "获取分页数据失败", "error": err.Error()})
 			return
 		}
 		for _, b := range blogElems {
-			var u entity.User
 			var bc entity.BlogComment
-			c.Database.C("User").FindId(b.UserID).One(&u)
-			c.Database.C("BlogComment").FindId(b.ID).Select(bson.M{
+			db.FindRef(&b.AuthorRef).Select(bson.M{"headerIcon": 1, "username": 1}).One(&b.Author)
+			db.C("BlogComment").FindId(b.ID).Select(bson.M{
 				"size": 1,
 			}).One(&bc)
-			b.AuthorIcon = u.HeaderIcon
-			b.AuthorName = u.Username
 			b.CommentSize = bc.Size
 		}
 	})
@@ -123,22 +122,21 @@ func GetBlog(req *http.Request, r render.Render, mgoOp *env.MgoOp) {
 	entity.UpdateViews(blogID)
 	var blogElem struct {
 		entity.Blog `bson:",inline"`
-		AuthorIcon  string `json:"authorIcon"`
-		AuthorName  string `json:"authorName"`
-		CommentSize int    `json:"commentSize"`
+		CommentSize int         `json:"commentSize"`
+		Author      entity.User `json:"author"`
 	}
 	var err error
-	mgoOp.WithC("Blog", func(c *mgo.Collection) {
-		err = c.FindId(blogID).One(&blogElem)
+	mgoOp.WithDB(func(db *mgo.Database) {
+		err = db.C("Blog").FindId(blogID).One(&blogElem)
+		db.FindRef(&blogElem.AuthorRef).Select(bson.M{
+			"headerIcon": 1,
+			"username":   1,
+		}).One(&blogElem.Author)
 	})
 	if err != nil {
 		r.JSON(200, model.NewResult(false, 0, "博客不存在", nil))
 		return
 	}
-	var u entity.User
-	mgoOp.FindId("User", blogElem.UserID, &u)
-	blogElem.AuthorIcon = u.HeaderIcon
-	blogElem.AuthorName = u.Username
 	blogElem.CommentSize = entity.GetSize(blogID)
 	r.JSON(200, model.NewResult(true, 0, "获取成功", blogElem))
 }
@@ -158,7 +156,7 @@ func verifyPutBlog(b entity.Blog, r render.Render, sess session.Store) {
 		r.JSON(200, model.NewResult(false, 0, "博客不存在，修改失败", nil))
 		return
 	}
-	if originBlog.UserID != sess.Get("user").(entity.User).ID {
+	if originBlog.AuthorRef.Id != sess.Get("user").(entity.User).ID {
 		r.JSON(http.StatusForbidden, model.NewResult(false, 0, "没权权限修改博客博客", nil))
 		return
 	}
@@ -195,7 +193,7 @@ func delBlog(req *http.Request, r render.Render, mgoOp *env.MgoOp, sess session.
 		return
 	}
 	u := sess.Get("user").(entity.User)
-	if u.ID != b.UserID {
+	if u.ID != b.AuthorRef.Id {
 		r.JSON(200, map[string]interface{}{"success": false, "desc": "权限不足"})
 		return
 	}
@@ -220,25 +218,23 @@ func getUserBlog(req *http.Request, r render.Render, mgoOp *env.MgoOp) {
 	}
 
 	// 2. 根据userId获取用户所有博文
-	var userBlogs []struct {
+	var userBlogs []*struct {
 		entity.Blog `bson:",inline"`
-		AuthorIcon  string `json:"authorIcon"`
-		AuthorName  string `json:"authorName"`
-		CommentSize int    `json:"commentSize"`
+		Author      entity.User `json:"author"`
+		CommentSize int         `json:"commentSize"`
 	}
 	var u entity.User
 	var err error
-	mgoOp.WithC("Blog", func(c *mgo.Collection) {
-		err = c.Database.C("User").FindId(userId).Select(bson.M{}).One(&u)
+	mgoOp.WithDB(func(db *mgo.Database) {
+		err = db.C("User").FindId(userId).Select(bson.M{"headerIcon": 1, "username": 1}).One(&u)
 		if err != nil {
 			return
 		}
-		c.Find(bson.M{"userId": userId}).All(&userBlogs)
+		db.C("Blog").Find(bson.M{"authorRef.$id": userId}).All(&userBlogs)
 		for _, b := range userBlogs {
-			b.AuthorIcon = u.HeaderIcon
-			b.AuthorName = u.Username
+			b.Author = u
 			var bc entity.BlogComment
-			c.Database.C("BlogComment").FindId(b.ID).Select(bson.M{"size": 1}).One(&bc)
+			db.C("BlogComment").FindId(b.ID).Select(bson.M{"size": 1}).One(&bc)
 			b.CommentSize = bc.Size
 		}
 	})

@@ -8,6 +8,21 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
+func init() {
+	var err error
+	env.MgoOpInst.WithC("User", func(c *mgo.Collection) {
+		index := mgo.Index{
+			Key:    []string{"updateDate"},
+			Unique: true,
+			Sparse: true,
+		}
+		err = c.EnsureIndex(index)
+	})
+	if err != nil {
+		panic(err)
+	}
+}
+
 //ContentTypes 博文内容类型
 var ContentTypes = []string{"markdown"}
 
@@ -17,11 +32,10 @@ type Blog struct {
 	Title       string    `bson:"title" json:"title" form:"title"`
 	Content     string    `bson:"content" json:"content" form:"content"`
 	ContentType string    `bson:"contentType" json:"contentType" form:"contentType"`
-	UserID      string    `bson:"userId" json:"userId" from:"userId"`
 	ViewTimes   int       `bson:"viewTimes" json:"viewTimes" from:"viewTimes"`    //浏览次数
-	AuthorName  string    `bson:"authorName" json:"authorName" form:"authorName"` //作者姓名
 	CreateDate  time.Time `bson:"createDate" json:"createDate" form:"createDate"` //创建日期
 	UpdateDate  time.Time `bson:"updateDate" json:"updateDate" form:"updateDate"` //修改日期
+	AuthorRef   mgo.DBRef `bson:"authorRef" json:"-" form:"-"`                    //作者
 }
 
 //Add 新增博客

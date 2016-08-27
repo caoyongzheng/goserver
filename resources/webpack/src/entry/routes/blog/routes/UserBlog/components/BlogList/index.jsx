@@ -9,15 +9,14 @@ function UserBlogs({ blogs }) {
   return (
     <div>
       {
-        _.map(blogs, ({ id, title, content, authorName, authorIcon,
-          viewTimes, commentSize, updateDate }) => (
+        _.map(blogs, ({ id, title, content, author, viewTimes, commentSize, updateDate }) => (
           <div key={id} style={{ paddingTop: '40px', position: 'relative' }}>
             <BlogIndexBox
               url={`${R.BlogView}?blogId=${id}`}
               title={title}
               content={`${content.substr(0, 250)}${content.length > 250 ? '...' : ''}`}
-              authorName={authorName}
-              authorIcon={imageURL(authorIcon) || DefaultHeaderIcon}
+              authorName={author.username}
+              authorIcon={imageURL(author.headerIcon) || DefaultHeaderIcon}
               viewTimes={viewTimes}
               commentSize={commentSize}
               time={updateDate}

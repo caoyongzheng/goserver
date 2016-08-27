@@ -1,10 +1,7 @@
 import React, { PropTypes } from 'react'
 import { withRouter } from 'react-router'
 import { Store, Provider, GlobalStores } from 'react-app-store'
-import marked from 'Marked'
 import DelBlogPopup from 'DelBlogPopup'
-import { imageURL } from 'PathUtil'
-import DefaultHeaderIcon from 'DefaultHeaderIcon'
 import Comments from '../components/comments/Comments'
 import BlogView from '../components/BlogView'
 import actionFactorys from '../actions'
@@ -36,18 +33,7 @@ class ViewApp extends React.Component {
           connects={[
             {
               store: this.store,
-              propsFn: ({ blog }) =>
-                ({
-                  id: blog.id,
-                  title: blog.title,
-                  html: marked(blog.content || ''),
-                  authorName: blog.authorName,
-                  authorIcon: imageURL(blog.authorIcon) || DefaultHeaderIcon,
-                  viewTimes: blog.viewTimes,
-                  commentSize: blog.commentSize,
-                  time: blog.updateDate,
-                  userId: blog.userId,
-                }),
+              propsFn: ({ blog }) => ({ blog }),
               linkStates: ['blog'],
               actionsFn({ delBlogPopupShow }) {
                 return { onDelBlog: delBlogPopupShow }
@@ -56,7 +42,7 @@ class ViewApp extends React.Component {
             {
               store: GlobalStores.get('App'),
               propsFn({ user }) {
-                return { currentUserId: user.id }
+                return { userId: user.id }
               },
               linkStates: ['user'],
             },
@@ -86,3 +72,14 @@ ViewApp.propTypes = {
   location: PropTypes.object.isRequired,
 }
 module.exports = withRouter(ViewApp)
+/*
+id: blog.id,
+title: blog.title,
+html: marked(blog.content || ''),
+authorName: blog.author.username,
+authorIcon: imageURL(blog.author.headerIcon) || DefaultHeaderIcon,
+viewTimes: blog.viewTimes,
+commentSize: blog.commentSize,
+time: blog.updateDate,
+userId: blog.author.id,
+ */

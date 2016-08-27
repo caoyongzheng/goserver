@@ -37,9 +37,10 @@ func (mgoOp *MgoOp) getSession() *mgo.Session {
 	return mgoOp.session.Clone()
 }
 
-func (mgoOp *MgoOp) WithDB(collectionName string, dbFn func(*mgo.Database)) {
+func (mgoOp *MgoOp) WithDB(dbFn func(*mgo.Database)) {
 	session := mgoOp.getSession()
 	defer session.Close()
+	dbFn(session.DB(mgoOp.name))
 }
 
 func (mgoOp *MgoOp) WithC(collectionName string, q func(*mgo.Collection)) {

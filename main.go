@@ -6,7 +6,7 @@ import (
 	_ "github.com/caoyongzheng/gotest/services/image/controller/image"
 	// _ "github.com/caoyongzheng/gotest/services/novel"
 	_ "github.com/caoyongzheng/gotest/services/static/controller"
-	_ "github.com/caoyongzheng/gotest/services/user/controller/user"
+	_ "github.com/caoyongzheng/gotest/services/user"
 )
 
 func main() {
