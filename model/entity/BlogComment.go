@@ -32,6 +32,10 @@ type BlogComment struct {
 	Comments []model.Comment `bson:"comments" json:"comments" form:"comments"`
 }
 
+func (bc *BlogComment) GetCollectionName() string {
+	return "BlogComment"
+}
+
 //GetPage 获取评论分页
 func GetPage(id string, page, pagesize int) (bc BlogComment, err error) {
 	query := func(c *mgo.Collection) {
@@ -61,16 +65,4 @@ func AddCommont(id string, comment model.Comment) (newC model.Comment, err error
 	env.WitchCollection("BlogComment", query)
 	newC = comment
 	return
-}
-
-func GetSize(id string) int {
-	var bc BlogComment
-	query := func(c *mgo.Collection) {
-		c.Find(bson.M{"_id": id}).Select(
-			bson.M{
-				"size": 1,
-			}).One(&bc)
-	}
-	env.WitchCollection("BlogComment", query)
-	return bc.Size
 }

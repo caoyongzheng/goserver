@@ -17,13 +17,20 @@ class ViewApp extends React.Component {
         confirmTitle: '',
       },
       actionFactorys,
+      didDispatch: ({ type }) => {
+        if (type === 'GetBlog') {
+          $.ajax({
+            url: `/api/blog/update,viewtimes?blogId=${this.getBlogId()}`,
+          })
+        }
+      },
     })
     this.getBlog()
   }
   getBlog = () => {
-    const { location } = this.props
-    this.store.actions.getBlog(location.query.blogId)
+    this.store.actions.getBlog(this.getBlogId())
   }
+  getBlogId = () => this.props.location.query.blogId
   render() {
     const { location } = this.props
     return (
@@ -72,14 +79,3 @@ ViewApp.propTypes = {
   location: PropTypes.object.isRequired,
 }
 module.exports = withRouter(ViewApp)
-/*
-id: blog.id,
-title: blog.title,
-html: marked(blog.content || ''),
-authorName: blog.author.username,
-authorIcon: imageURL(blog.author.headerIcon) || DefaultHeaderIcon,
-viewTimes: blog.viewTimes,
-commentSize: blog.commentSize,
-time: blog.updateDate,
-userId: blog.author.id,
- */

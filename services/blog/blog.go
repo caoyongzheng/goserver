@@ -27,10 +27,21 @@ func init() {
 		r.Get("", GetBlog)
 		r.Put("", auth.Great(entity.Normal), binding.Bind(entity.Blog{}), verifyPutBlog, PutBlog)
 		r.Delete("", auth.Great(entity.Normal), delBlog)
+		r.Get("/update,viewtimes", updateViewTimes)
 	})
 }
 
 type Result map[string]interface{}
+
+// updateViewTimes 更新博文浏览次数
+func updateViewTimes(req *http.Request, mgoOp *env.MgoOp) bool {
+	blogId := req.URL.Query().Get("blogId")
+	if blogId == "" {
+		return false
+	}
+	mgoOp.UpdateId("Blog", blogId, bson.M{"$inc": bson.M{"viewTimes": 1}})
+	return true
+}
 
 //NewBlog 新建博客
 func NewBlog(b entity.Blog, sess session.Store, r render.Render, mgoOp *env.MgoOp) {
@@ -134,7 +145,6 @@ func GetBlog(req *http.Request, r render.Render, mgoOp *env.MgoOp) {
 		r.JSON(200, model.NewResult(false, 0, "blogID不能为空", nil))
 		return
 	}
-	entity.UpdateViews(blogID)
 	var blogElem struct {
 		entity.Blog `bson:",inline"`
 		CommentSize int         `json:"commentSize"`
@@ -147,12 +157,14 @@ func GetBlog(req *http.Request, r render.Render, mgoOp *env.MgoOp) {
 			"headerIcon": 1,
 			"username":   1,
 		}).One(&blogElem.Author)
+		var bc entity.BlogComment
+		db.C(bc.GetCollectionName()).FindId(blogID).Select(bson.M{"size": 1}).One(&bc)
+		blogElem.CommentSize = bc.Size
 	})
 	if err != nil {
 		r.JSON(200, model.NewResult(false, 0, "博客不存在", nil))
 		return
 	}
-	blogElem.CommentSize = entity.GetSize(blogID)
 	r.JSON(200, model.NewResult(true, 0, "获取成功", blogElem))
 }
 

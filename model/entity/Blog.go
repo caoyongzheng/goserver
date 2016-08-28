@@ -68,17 +68,6 @@ func Edit(b Blog) (err error) {
 	return
 }
 
-//UpdateViews 更新浏览次数
-func UpdateViews(id string) {
-	query := func(c *mgo.Collection) {
-		c.Update(bson.M{"_id": id}, bson.M{"$inc": bson.M{
-			"viewTimes": 1,
-		}})
-	}
-	env.WitchCollection("Blog", query)
-	return
-}
-
 //GetByID 获取博客
 func GetByID(blogID string) (b Blog, err error) {
 	query := func(c *mgo.Collection) {

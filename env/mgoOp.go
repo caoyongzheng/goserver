@@ -68,6 +68,11 @@ func (mgoOp *MgoOp) Insert(collectionName string, docs ...interface{}) error {
 	defer session.Close()
 	return session.DB(mgoOp.name).C(collectionName).Insert(docs...)
 }
+func (mgoOp *MgoOp) UpdateId(collectionName string, id interface{}, update interface{}) error {
+	session := mgoOp.getSession()
+	defer session.Close()
+	return session.DB(mgoOp.name).C(collectionName).UpdateId(id, update)
+}
 
 var mgoSession *mgo.Session
 
