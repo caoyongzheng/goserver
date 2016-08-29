@@ -9,22 +9,6 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-func init() {
-	var err error
-	query := func(c *mgo.Collection) {
-		index := mgo.Index{
-			Key:    []string{"blogId"},
-			Unique: true,
-			Sparse: true,
-		}
-		err = c.EnsureIndex(index)
-	}
-	env.WitchCollection("BlogComment", query)
-	if err != nil {
-		panic(err)
-	}
-}
-
 //BlogComment 博客评论
 type BlogComment struct {
 	ID       string          `bson:"_id" json:"id" form:"id"`

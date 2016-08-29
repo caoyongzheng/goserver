@@ -10,9 +10,9 @@ import (
 
 func init() {
 	var err error
-	env.MgoOpInst.WithC("User", func(c *mgo.Collection) {
+	env.MgoOpInst.WithC("Blog", func(c *mgo.Collection) {
 		index := mgo.Index{
-			Key:    []string{"updateDate"},
+			Key:    []string{"-updateDate"},
 			Unique: true,
 			Sparse: true,
 		}

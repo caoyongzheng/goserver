@@ -116,10 +116,10 @@ func GetBlogPage(req *http.Request, r render.Render, mgoOp *env.MgoOp) {
 	if userId != "" {
 		query["authorRef.$id"] = userId
 	}
-
+	//sort
 	mgoOp.WithDB(func(db *mgo.Database) {
 		total, err = db.C("Blog").Find(query).Count()
-		err = db.C("Blog").Find(query).Skip((page - 1) * pagesize).Limit(pagesize).All(&blogElems) //获取分页数据
+		err = db.C("Blog").Find(query).Sort("-updateDate").Skip((page - 1) * pagesize).Limit(pagesize).All(&blogElems) //获取分页数据
 		if err != nil {
 			r.JSON(200, Result{"success": false, "desc": "获取分页数据失败", "error": err.Error()})
 			return

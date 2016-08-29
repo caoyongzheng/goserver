@@ -17,7 +17,7 @@ func init() {
 	var err error
 	env.MgoOpInst.WithC("User", func(c *mgo.Collection) {
 		index := mgo.Index{
-			Key:    []string{"username"},
+			Key:    []string{"username", "password"},
 			Unique: true,
 			Sparse: true,
 		}
