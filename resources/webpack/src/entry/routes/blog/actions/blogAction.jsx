@@ -1,7 +1,8 @@
 import request from 'superagent'
+import { Host } from 'PathUtil'
 
 export function getBlog(blogId, { successHandle }) {
-  request.get('/api/blog')
+  request.get(`${Host}/api/blog`)
   .query({ blogId })
   .then((res) => {
     const result = JSON.parse(res.text)
@@ -28,7 +29,7 @@ export function editBlog(blog, { successHandle }) {
     $.notify('blog content shouldn`t be Empty!')
     return
   }
-  request.put('/api/blog')
+  request.put(`${Host}/api/blog`)
   .send(blog)
   .set('Content-Type', 'application/x-www-form-urlencoded')
   .then((res) => {

@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import { Host } from 'PathUtil'
 
 export default function delBlogPopupActions({ dispatch, getState }) {
   function delBlogPopupShow(blogId) {
@@ -45,7 +46,7 @@ export default function delBlogPopupActions({ dispatch, getState }) {
     }
     $.ajax({
       type: 'DELETE',
-      url: `/api/blog?blogId=${blogId}`,
+      url: `${Host}/api/blog?blogId=${blogId}`,
       success: (result) => {
         const { success, desc } = result
         if (success) {

@@ -10,11 +10,7 @@ import (
 var MgoOpInst *MgoOp
 
 func initDB() {
-	dbIP := os.Getenv("MONGODB_PORT_27017_TCP_ADDR")
-	if dbIP == "" {
-		dbIP = GetConfig("DBIP")
-	}
-	dbUrl := dbIP + ":27017"
+	dbUrl := "mongodb:27017"
 	MgoOpInst = &MgoOp{url: dbUrl, name: GetConfig("DBName")}
 }
 

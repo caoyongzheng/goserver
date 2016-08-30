@@ -1,21 +1,25 @@
-import request from 'superagent'
+// import request from 'superagent'
+import { ImgHost } from 'PathUtil'
 
 export function uploadImage(image, { successHandle, failHandle, errHandle }) {
   const formData = new FormData()
   formData.append('fileType', image.type)
   formData.append('image', image)
-  request.post('/api/image/add')
-    .send(formData)
-    .then((res) => {
-      const result = JSON.parse(res.text)
+  $.ajax({
+    type: 'POST',
+    url: `${ImgHost}/api/image/add`,
+    processData: false,
+    contentType: false,
+    data: formData,
+    success(result) {
       if (result.success && successHandle) {
         successHandle(result)
       } else if (!result.success && failHandle) {
         failHandle(result)
       }
-    }, (err) => {
-      if (errHandle) {
-        errHandle(err)
-      }
-    })
+    },
+    error(err) {
+      errHandle(err)
+    },
+  })
 }

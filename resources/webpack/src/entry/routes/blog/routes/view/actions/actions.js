@@ -1,8 +1,10 @@
+import { Host } from 'PathUtil'
+
 export default function Actions({ dispatch, getState }) {
 
   function getBlog(blogId) {
     $.ajax({
-      url: `/api/blog?blogId=${blogId}`,
+      url: `${Host}/api/blog?blogId=${blogId}`,
       success: (result) => {
         const { success, desc, data } = result
         if (success) {
@@ -19,7 +21,7 @@ export default function Actions({ dispatch, getState }) {
     const blogId = getState().blog.id
     $.ajax({
       type: 'DELETE',
-      url: `/api/blog?blogId=${blogId}`,
+      url: `${Host}/api/blog?blogId=${blogId}`,
       success: (result) => {
         const { success, desc } = result
         if (success) {

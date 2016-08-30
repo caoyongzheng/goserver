@@ -1,7 +1,8 @@
 import request from 'superagent'
+import { Host } from 'PathUtil'
 
 export function setHeaderIcon(filename, { successHandle, failHandle, errHandle }) {
-  request.put('/api/user/headerIcon')
+  request.put(`${Host}/api/user/headerIcon`)
     .set('Content-Type', 'application/x-www-form-urlencoded')
     .send({ filename })
     .then((res) => {

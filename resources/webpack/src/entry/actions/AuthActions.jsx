@@ -1,8 +1,9 @@
 import C from './Consants'
+import { Host } from 'PathUtil'
 export default function AuthActions({ dispatch }) {
   function onLogin() {
     $.ajax({
-      url: '/api/user/session/user',
+      url: `${Host}/api/user/session/user`,
       success: (result) => {
         if (result.success) {
           const user = result.data
@@ -22,7 +23,7 @@ export default function AuthActions({ dispatch }) {
   }
   function onLogout() {
     $.ajax({
-      url: '/api/user/signout',
+      url: `${Host}/api/user/signout`,
       success: (result) => {
         if (result.success) {
           dispatch({

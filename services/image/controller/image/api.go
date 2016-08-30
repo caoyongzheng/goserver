@@ -3,15 +3,16 @@ package imageC
 import (
 	"crypto/md5"
 	"fmt"
+	"io/ioutil"
+	"net/http"
+	"os"
+
 	"github.com/caoyongzheng/gotest/env"
 	"github.com/caoyongzheng/gotest/model"
 	"github.com/caoyongzheng/gotest/services/image/model/image"
 	"github.com/caoyongzheng/gotest/utils/fileutil"
 	"github.com/go-martini/martini"
 	"github.com/martini-contrib/render"
-	"io/ioutil"
-	"net/http"
-	"os"
 )
 
 func init() {

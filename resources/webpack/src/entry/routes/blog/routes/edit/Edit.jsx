@@ -6,6 +6,7 @@ import { uploadImage } from 'ImageAction'
 import { imageURL } from 'PathUtil'
 import { getBlog, editBlog } from '../../actions/blogAction.jsx'
 import { withRouter } from 'react-router'
+import R from 'R'
 
 class Edit extends React.Component {
   constructor(props) {
@@ -45,7 +46,7 @@ class Edit extends React.Component {
     }
     editBlog(blog, {
       successHandle: () => {
-        this.props.router.push({ pathname: '/blog/view', query: { blogId: location.query.blogId } })
+        this.props.router.push({ pathname: R.BlogView, query: { blogId: location.query.blogId } })
       },
     })
   }

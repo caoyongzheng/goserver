@@ -13,7 +13,7 @@ func init() {
 	env.Router.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/app/", http.StatusMovedPermanently)
 	})
-	env.Router.Get("/app/**", func(r render.Render) {
+	env.Router.Get("/app/**", func(r render.Render, w http.ResponseWriter, req *http.Request) {
 		r.HTML(200, "app", nil)
 	})
 	//webfront js,css,image etc.

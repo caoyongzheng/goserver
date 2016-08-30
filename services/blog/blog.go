@@ -112,7 +112,6 @@ func GetBlogPage(req *http.Request, r render.Render, mgoOp *env.MgoOp) {
 	//query
 	query := bson.M{}
 	userId := req.URL.Query().Get("userId")
-	log.Println(userId)
 	if userId != "" {
 		query["authorRef.$id"] = userId
 	}

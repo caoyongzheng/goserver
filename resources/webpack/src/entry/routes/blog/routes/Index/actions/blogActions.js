@@ -1,7 +1,8 @@
+import { Host } from 'PathUtil'
 export default function blogActions({ dispatch }) {
   function getBlogPage(query) {
     $.ajax({
-      url: `/api/blog/page`,
+      url: `${Host}/api/blog/page`,
       data: query,
       success: (result) => {
         const { success, total, elements } = result

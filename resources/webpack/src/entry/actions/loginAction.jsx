@@ -1,8 +1,9 @@
 import request from 'superagent'
+import { Host } from 'PathUtil'
 
 export function signIn(obj, { successHandle, failHandle, errHandle }) {
   request
-    .post('/api/user/signin')
+    .post(`${Host}/api/user/signin`)
     .send(obj)
     .set('Content-Type', 'application/x-www-form-urlencoded')
     .then((res) => {
@@ -21,7 +22,7 @@ export function signIn(obj, { successHandle, failHandle, errHandle }) {
 
 export function signUp(obj, { successHandle, failHandle, errHandle }) {
   request
-    .post('/api/user/signup')
+    .post(`${Host}/api/user/signup`)
     .send(obj)
     .set('Content-Type', 'application/x-www-form-urlencoded')
     .then((res) => {

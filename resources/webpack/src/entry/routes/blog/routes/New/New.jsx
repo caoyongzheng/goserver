@@ -4,7 +4,7 @@ import MDEditor from 'react-mdeditor'
 import Input from 'Input'
 import css from './New.scss'
 import { uploadImage } from 'ImageAction'
-import { imageURL } from 'PathUtil'
+import { Host, imageURL } from 'PathUtil'
 import R from 'R'
 import { GlobalStores } from 'react-app-store'
 
@@ -36,7 +36,7 @@ class NewApp extends React.Component {
     }
     $.ajax({
       type: 'POST',
-      url: '/api/blog/new',
+      url: `${Host}/api/blog/new`,
       data: blog,
       success: (result) => {
         if (result.success) {
