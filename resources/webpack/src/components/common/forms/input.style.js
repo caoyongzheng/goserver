@@ -1,8 +1,8 @@
 module.exports = {
   normal: {
     display: 'block',
-    width: '100%',
-    height: '36px',
+    width: 'calc(100% - 24px)',
+    height: '20px',
     padding: '6px 12px',
     fontSize: '14px',
     lineHeight: '1.42857143',

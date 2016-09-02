@@ -7,7 +7,6 @@ import Pagination from 'Pagination'
 import css from './Index.scss'
 import BlogIndexList from 'BlogIndexList'
 import actionFactorys from '../actions'
-import NewBlogButton from 'NewBlogButton'
 
 class Index extends React.Component {
   constructor(props) {
@@ -55,7 +54,7 @@ class Index extends React.Component {
   getPages = (total, pagesize) =>
   Math.floor(total / pagesize) + Math.ceil(total % pagesize / pagesize)
   toBlogEdit = (blogId) => {
-    this.props.router.push({ pathname: R.BlogEdit, query: { blogId } })
+    this.props.router.push({ pathname: R.BlogEdit.pathname, query: { blogId } })
   }
   render() {
     return (
@@ -75,9 +74,6 @@ class Index extends React.Component {
               actionsFn: ({ delBlogPopupShow }) => ({ onDelBlog: delBlogPopupShow }),
             }]}
           />
-        </div>
-        <div className={css.newBlog}>
-          <NewBlogButton />
         </div>
         <Provider
           Component={Pagination}

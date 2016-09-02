@@ -83,7 +83,7 @@ func SignOut(r render.Render, sess session.Store) {
 	r.JSON(200, map[string]interface{}{"success": true, "desc": "登出成功"})
 }
 
-//GetSessionUser 获取当前会话用户
+//GetSessionUser 获取当前会话用户old
 func GetSessionUser(r render.Render, sess session.Store) {
 	u := sess.Get("user")
 	if u == nil {
@@ -93,4 +93,16 @@ func GetSessionUser(r render.Render, sess session.Store) {
 	uu := u.(entity.User)
 	uu.Password = ""
 	r.JSON(200, map[string]interface{}{"success": true, "desc": "用户存在", "data": uu})
+}
+
+// getSessionUser 获取当前会话用户
+func getSessionUser(sess session.Store, r render.Render) {
+	u := sess.Get("user")
+	if u == nil {
+		r.JSON(200, entity.User{})
+		return
+	}
+	uu := u.(entity.User)
+	uu.Password = ""
+	r.JSON(200, uu)
 }

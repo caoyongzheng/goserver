@@ -25,7 +25,7 @@ function BlogList({ blogs, userId, onDelBlog, toBlogEdit }) {
                 <SvgIcon {...icons.edit} onClick={() => toBlogEdit(id)} /> : null}
             </div>
             <BlogIndexBox
-              url={`${R.BlogView}?blogId=${id}`}
+              url={`${R.BlogView.pathname}?blogId=${id}`}
               title={title}
               content={`${content.substr(0, 250)}${content.length > 250 ? '...' : ''}`}
               authorName={author.username}
