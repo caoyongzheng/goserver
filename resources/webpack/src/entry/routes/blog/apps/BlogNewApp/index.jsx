@@ -4,7 +4,7 @@ import BlogNewForm from './components/BlogNewForm'
 import BlogFormStore from '../../stores/BlogFormStore'
 
 const styles = {
-  state: {
+  stage: {
     maxWidth: '980px',
     margin: '0 auto',
     padding: '0 1em',

@@ -7,7 +7,7 @@ module.exports = {
   },
   getComponent(nextState, cb) {
     require.ensure([], (require) => {
-      cb(null, require('../apps/Index'))
+      cb(null, require('../apps/BlogIndexApp'))
     })
   },
 }

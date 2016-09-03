@@ -7,10 +7,12 @@ export default function () {
     <Connector
       component={Header}
       connects={{ Auth: ['username', 'headerIcon'], Page: ['page'] }}
-      setProps={({ Auth: { username, headerIcon }, Page: { page } }) =>
-      ({ username, headerIcon, page })}
-      setActions={({ LeftNav: { handleOpen } }) => ({
-        onLeftIconButtonTouchTap: handleOpen,
+      setProps={(states, actions) => ({
+        username: states.Auth.username,
+        headerIcon: states.Auth.headerIcon,
+        page: states.Page.page,
+        onLeftIconButtonTouchTap: actions.LeftNav.handleToggle,
+        onTitleTouchTap: actions.LeftNav.handleToggle,
       })}
     />
   )

@@ -1,9 +1,16 @@
 import React, { PropTypes } from 'react'
-import css from './Edit.scss'
 import { withRouter } from 'react-router'
 import BlogEditForm from './components/BlogEditForm'
 import BlogFormStore from '../../stores/BlogFormStore'
 import { globalAppStores } from 'react-appstores'
+
+const styles = {
+  stage: {
+    maxWidth: '980px',
+    margin: '0 auto',
+    padding: '0 1em',
+  },
+}
 
 class Edit extends React.Component {
   constructor(props) {
@@ -17,7 +24,7 @@ class Edit extends React.Component {
   }
   render() {
     return (
-      <div className={css.stage}>
+      <div style={styles.stage}>
         <div style={{ marginTop: '20px' }}>
           <BlogEditForm />
         </div>

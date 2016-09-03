@@ -1,13 +1,25 @@
 import React, { PropTypes } from 'react'
 import { withRouter } from 'react-router'
 import { globalAppStores, DispatchListener } from 'react-appstores'
-import css from './Index.scss'
 import BlogStore from './stores/BlogStore'
 import DelBlogModalStore from '../../stores/DelBlogModalStore'
 import BlogList from './components/BlogList'
 import DelBlogModal from '../../components/DelBlogModal'
 
-class Index extends React.Component {
+const styles = {
+  stage: {
+    position: 'relative',
+  },
+  blogList: {
+    maxWidth: '900px',
+    margin: '0 auto',
+    padding: '0 10px',
+    position: 'relative',
+    height: '100%',
+  },
+}
+
+class BlogIndexApp extends React.Component {
   constructor(props) {
     super(props)
     globalAppStores.addStore('Blog', BlogStore)
@@ -42,13 +54,13 @@ class Index extends React.Component {
   }
   render() {
     return (
-      <div className={css.stage}>
+      <div style={styles.stage}>
         <DispatchListener
           storeName={'DelBlogModal'}
           type={'DelBlog'}
           handle={this.handleDidDelBlog}
         />
-        <div className={css.blogList}>
+        <div style={styles.blogList}>
           <BlogList getPages={this.getPages} />
         </div>
         <DelBlogModal />
@@ -57,8 +69,8 @@ class Index extends React.Component {
   }
 }
 
-Index.propTypes = {
+BlogIndexApp.propTypes = {
   location: PropTypes.object,
 }
 
-module.exports = withRouter(Index)
+module.exports = withRouter(BlogIndexApp)

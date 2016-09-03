@@ -11,5 +11,11 @@ export default function actionFactory({ dispatch, getState }) {
       state: { open: true },
     })
   }
-  return { handleClose, handleOpen }
+  function handleToggle() {
+    dispatch({
+      type: 'HandleToggle',
+      state: { open: !getState().open },
+    })
+  }
+  return { handleClose, handleOpen, handleToggle }
 }

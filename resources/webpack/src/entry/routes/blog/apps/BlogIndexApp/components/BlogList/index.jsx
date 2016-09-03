@@ -24,16 +24,14 @@ class BlogList extends React.Component {
         <Connector
           component={Pagination}
           connects={{ Blog: ['total', 'pagesize', 'page'] }}
-          setProps={({ Blog: { total, pagesize, page } }) => ({
+          setProps={({ Blog: { total, pagesize, page } }, { Blog: { getBlogPage } }) => ({
             currentPage: page,
             pages: getPages(total, pagesize),
             style: {
               display: getPages(total, pagesize) < 2 ? 'none' : 'block',
               textAlign: 'center',
             },
-          })}
-          setActions={({ Blog: { getBlogPage } }) => ({
-            onChange: (page) => getBlogPage({ page, pagesize: 10 }),
+            onChange(newpage) { getBlogPage({ page: newpage, pagesize }) },
           })}
         />
       </div>

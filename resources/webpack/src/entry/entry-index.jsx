@@ -1,7 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Router, browserHistory } from 'react-router'
-import { Store, GlobalStores } from 'react-app-store'
 import { globalAppStores } from 'react-appstores'
 import AuthStore from './stores/AuthStore'
 import 'Notify'
@@ -10,20 +9,7 @@ injectTapEventPlugin()
 import R from 'R'
 
 import App from './App'
-import actionFactorys from './actions'
 import './app.scss'
-
-GlobalStores.add('App', new Store({
-  state: {
-    logStatus: 'LOGOUT', // 登录状态, oneOf ['LOGIN', 'LOGOUT'],
-    signModalDisplay: 'None', // 登录Modal显示状态, oneOf ['None', 'SignIn', 'SignOut'],
-    user: { // 当前会话用户信息
-      logStatus: 'LOGOUT', // 登录状态, oneOf ['LOGIN', 'LOGOUT'],
-    },
-  },
-  actionFactorys,
-}))
-GlobalStores.get('App').actions.onLogin()
 
 const AppRoute = {
   path: '/app',

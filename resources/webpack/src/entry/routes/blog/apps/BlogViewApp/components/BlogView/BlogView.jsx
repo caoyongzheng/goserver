@@ -1,9 +1,11 @@
 import React, { PropTypes } from 'react'
-import css from './ViewBox.scss'
+import css from './BlogView.scss'
 import Paper from 'material-ui/Paper'
+import icons from 'BlogIcons'
+import SvgIcon from 'SvgIcon'
 
-function ViewBox({ title, html, authorName, authorIcon,
-  viewTimes, commentSize, time }) {
+function ViewBox({ id, title, html, authorName, authorIcon,
+  viewTimes, commentSize, time, isOwner, onEdit, onDel }) {
   const date = new Date(time)
   const now = new Date()
   let year = ''
@@ -13,6 +15,8 @@ function ViewBox({ title, html, authorName, authorIcon,
   const timeFormat = `${year}${date.getMonth() + 1}月${date.getDate()}日`
   return (
     <Paper>
+      {isOwner ? <SvgIcon {...icons.del} onClick={() => onDel(id)} /> : null}
+      {isOwner ? <SvgIcon {...icons.edit} onClick={onEdit} /> : null}
       <div className={css.header}>
         {title}
       </div>
@@ -44,6 +48,7 @@ function ViewBox({ title, html, authorName, authorIcon,
 }
 
 ViewBox.propTypes = {
+  id: PropTypes.string,
   title: PropTypes.string,
   html: PropTypes.string,
   authorName: PropTypes.string,
@@ -51,5 +56,8 @@ ViewBox.propTypes = {
   viewTimes: PropTypes.number,
   commentSize: PropTypes.number,
   time: PropTypes.string,
+  isOwner: PropTypes.bool,
+  onEdit: PropTypes.func.isRequired,
+  onDel: PropTypes.func.isRequired,
 }
 export default ViewBox

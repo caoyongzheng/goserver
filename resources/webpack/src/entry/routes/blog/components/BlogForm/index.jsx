@@ -24,6 +24,7 @@ class BlogEditForm extends React.Component {
         /><br />
         <div style={{ marginTop: '15px' }}>
           <MDEditor
+            zIndex={2000}
             ref={(editor) => (this.editor = editor)}
             onChange={(cm) => handleContentChange(cm.getValue())}
           />
