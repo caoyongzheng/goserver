@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react'
 import css from './IndexBox.scss'
 import { Link } from 'react-router'
+import Paper from 'material-ui/Paper'
 
 function IndexBox({ url, title, content, authorName, authorIcon,
   viewTimes, commentSize, time }) {
@@ -12,7 +13,7 @@ function IndexBox({ url, title, content, authorName, authorIcon,
   }
   const timeFormat = `${year}${date.getMonth() + 1}月${date.getDate()}日`
   return (
-    <div className={css.indexBox}>
+    <Paper style={{ padding: '20px 40px' }}>
       <div className={css.header}>
         <Link to={url}>
           {title}
@@ -40,7 +41,7 @@ function IndexBox({ url, title, content, authorName, authorIcon,
         <span style={{ marginLeft: '20px' }}>{'更新时间'}</span>
         <span style={{ marginLeft: '5px' }}>{timeFormat}</span>
       </div>
-    </div>
+    </Paper>
   )
 }
 

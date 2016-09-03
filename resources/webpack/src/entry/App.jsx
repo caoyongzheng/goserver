@@ -3,7 +3,6 @@ import { AppStoresProvider, globalAppStores, Connector, DispatchListener } from 
 import { withRouter } from 'react-router'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import Header from './components/Header'
-import AuthStore from './stores/AuthStore'
 import SignModalStore from './stores/SignModalStore'
 import PageStore from './stores/PageStore'
 import LeftNavStore from './stores/LeftNavStore'
@@ -11,12 +10,9 @@ import SignModal from './components/SignModal'
 import LeftNav from './components/LeftNav'
 import R from 'R'
 
-globalAppStores.addStore('Auth', AuthStore)
 globalAppStores.addStore('SignModal', SignModalStore)
 globalAppStores.addStore('Page', PageStore)
 globalAppStores.addStore('LeftNav', LeftNavStore)
-
-globalAppStores.actions.Auth.login()
 
 class App extends React.Component {
   constructor(props) {
@@ -56,7 +52,7 @@ class App extends React.Component {
                 <div
                   style={{ flex: 1, position: 'relative', marginLeft: `${open ? 250 : 0}px` }}
                 >
-                  {React.cloneElement(children, { appstores: globalAppStores })}
+                  {children}
                 </div>
               )}
               connects={{ LeftNav: ['open'] }}

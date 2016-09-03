@@ -54,13 +54,11 @@ function verifyAuth({ page, replace, next, nextState }) {
   const userRole = globalAppStores.states.Auth.role
   if (userRole < page.auth) { // 如果用户权限小于页面权限
     if (userRole === 0) { // 如果用户为游客
-      if (nextState.location.action === 'POP') { // 如果是重新获取页面
+      if (nextState.location.action === 'POP') {  // 如果是重新获取页面
         replace(R.BlogIndex.pathname)
-        globalAppStores.actions.SignModal.onSignIn()
-        next()
-      } else { // 如果是页面切换
-        globalAppStores.actions.SignModal.onSignIn()
       }
+      globalAppStores.actions.SignModal.onSignIn()
+      next()
       return
     }
     replace(R.BlogIndex.pathname)

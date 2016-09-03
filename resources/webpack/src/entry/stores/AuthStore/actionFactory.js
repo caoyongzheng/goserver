@@ -15,11 +15,11 @@ function verifyRole(role) {
 
 export default function actionFactory({ dispatch, getState }) {
   // login 获取当前会话用户
-  function login() {
+  function login(callBack) {
     $.ajax({
       url: '/api/user/sessionuser',
       success: (user) => {
-        const { username, role, headerIcon } = user
+        const { username, role, headerIcon, id } = user
         const newState = { role: verifyRole(role) }
         if (headerIcon) { // 当前用户存在
           newState.headerIcon = imageURL(headerIcon)
@@ -29,10 +29,16 @@ export default function actionFactory({ dispatch, getState }) {
         if (username) {
           newState.username = username
         }
+        if (id) {
+          newState.id = id
+        }
         dispatch({
           type: 'Login',
           state: newState,
         })
+        if (callBack) {
+          callBack()
+        }
       },
     })
   }

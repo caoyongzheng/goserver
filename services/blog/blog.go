@@ -1,7 +1,6 @@
 package blog
 
 import (
-	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -22,16 +21,37 @@ import (
 
 func init() {
 	env.Router.Group("/api/blog", func(r martini.Router) {
-		r.Post("/new", auth.Great(entity.Normal), binding.Bind(entity.Blog{}), verifyNewBlog, NewBlog)
+		r.Post("", auth.Great(entity.Normal), binding.Bind(entity.Blog{}), verifyNewBlog, NewBlog)
 		r.Get("/page", GetBlogPage)
 		r.Get("", GetBlog)
 		r.Put("", auth.Great(entity.Normal), binding.Bind(entity.Blog{}), verifyPutBlog, PutBlog)
 		r.Delete("", auth.Great(entity.Normal), delBlog)
 		r.Get("/update,viewtimes", updateViewTimes)
+		r.Get("/title", getTitle)
 	})
 }
 
 type Result map[string]interface{}
+
+func getTitle(r render.Render, mgoOp *env.MgoOp, req *http.Request) {
+	// 1. 获取并验证blogId
+	blogId := req.URL.Query().Get("blogId")
+	if blogId == "" {
+		r.JSON(200, map[string]interface{}{"success": false})
+		return
+	}
+	// 2. 根据blogId查询title
+	var b entity.Blog
+	var err error
+	mgoOp.WithC(b.GetCollectionName(), func(c *mgo.Collection) {
+		err = c.FindId(blogId).Select(bson.M{"title": 1}).One(&b)
+	})
+	if err != nil {
+		r.JSON(200, map[string]interface{}{"success": false, "desc": "博文不存在"})
+		return
+	}
+	r.JSON(200, map[string]interface{}{"success": true, "data": b.Title})
+}
 
 // updateViewTimes 更新博文浏览次数
 func updateViewTimes(req *http.Request, mgoOp *env.MgoOp) bool {
@@ -55,12 +75,11 @@ func NewBlog(b entity.Blog, sess session.Store, r render.Render, mgoOp *env.MgoO
 	b.CreateDate = time.Now()
 	b.UpdateDate = time.Now()
 	err := mgoOp.Insert(b.GetCollectionName(), &b)
-	log.Println(b.GetCollectionName())
 	if err != nil {
-		r.JSON(200, model.NewResult(false, 0, "新建博客失败", nil))
+		r.JSON(200, map[string]interface{}{"success": false})
 		return
 	}
-	r.JSON(200, model.NewResult(true, 0, "新建博客成功", nil))
+	r.JSON(200, map[string]interface{}{"success": true, "data": b.ID})
 }
 
 func verifyNewBlog(b entity.Blog, r render.Render) {

@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react'
 import css from './ViewBox.scss'
+import Paper from 'material-ui/Paper'
 
 function ViewBox({ title, html, authorName, authorIcon,
   viewTimes, commentSize, time }) {
@@ -11,7 +12,7 @@ function ViewBox({ title, html, authorName, authorIcon,
   }
   const timeFormat = `${year}${date.getMonth() + 1}月${date.getDate()}日`
   return (
-    <div className={css.viewBox}>
+    <Paper>
       <div className={css.header}>
         {title}
       </div>
@@ -38,7 +39,7 @@ function ViewBox({ title, html, authorName, authorIcon,
         <span style={{ marginLeft: '20px' }}>{'更新时间'}</span>
         <span style={{ marginLeft: '5px' }}>{timeFormat}</span>
       </div>
-    </div>
+    </Paper>
   )
 }
 
