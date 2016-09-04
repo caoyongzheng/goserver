@@ -16,7 +16,7 @@ const AppRoute = {
   component: App,
   indexRoute: { onEnter: (nextState, replace) => replace(R.Blog) },
   childRoutes: [
-    require('./routes/admin/User'),
+    require('./routes/admin/UserAdminApp'),
     require('./routes/blog/index.jsx'),
     // require('./routes/home/index.jsx'),
     // require('./routes/demos/index.jsx'),
