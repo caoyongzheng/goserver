@@ -1,6 +1,7 @@
 export default {
   page: 1, // 当前页码
   pagesize: 10, // 页码大小
+  search: '', // 搜索内容
   users: [], // 列表用户
   total: 0, // 用户总数
   selectedUsers: [], // 选中用户

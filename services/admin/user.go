@@ -103,6 +103,10 @@ func getUserPage(req *http.Request, r render.Render, mgoOp *env.MgoOp) {
 
 	//query
 	query := bson.M{}
+	search := req.URL.Query().Get("search")
+	if search != "" {
+		query["$text"] = bson.M{"$search": search}
+	}
 	mgoOp.WithDB(func(db *mgo.Database) {
 		userPage.Total, err = db.C("User").Find(query).Count()
 		err = db.C("User").Find(query).Skip((page - 1) * pagesize).Limit(pagesize).All(&userPage.Elements) //获取分页数据
@@ -119,6 +123,6 @@ func getUserPage(req *http.Request, r render.Render, mgoOp *env.MgoOp) {
 		page = maxPage
 	}
 	userPage.Page = page
-	r.JSON(200, map[string]interface{}{"success": true, "desc": "获取分页数据成功", "data": userPage})
+	r.JSON(200, map[string]interface{}{"success": true, "desc": "获取分页数据成功", "data": userPage, "query": query})
 	return
 }

@@ -3,7 +3,7 @@ import { globalAppStores, DispatchListener } from 'react-appstores'
 import Paper from 'material-ui/Paper'
 
 import UserAdminStore from './stores/UserAdminStore'
-import UserToolBar from './components/UserToolBar'
+import Toolbar from './components/Toolbar'
 import UserTable from './components/UserTable.jsx'
 import NewUserModal from './components/NewUserModal'
 import DelUserModal from './components/DelUserModal'
@@ -31,11 +31,7 @@ class UserApp extends React.Component {
             type={'NewUser'}
             handle={globalAppStores.actions.UserAdmin.refresh}
           />
-          <UserToolBar
-            add={globalAppStores.actions.UserAdmin.nHandleOpen}
-            del={globalAppStores.actions.UserAdmin.handleDOpen}
-            refresh={globalAppStores.actions.UserAdmin.refresh}
-          />
+          <Toolbar />
           <UserTable />
           <NewUserModal />
           <DelUserModal />

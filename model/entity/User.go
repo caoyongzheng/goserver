@@ -16,16 +16,21 @@ const (
 func init() {
 	var err error
 	env.MgoOpInst.WithC("User", func(c *mgo.Collection) {
-		index := mgo.Index{
+		err = c.EnsureIndex(mgo.Index{
 			Key:    []string{"username", "password"},
 			Unique: true,
-			Sparse: true,
+		})
+		if err != nil {
+			panic(err)
 		}
-		err = c.EnsureIndex(index)
+		err = c.EnsureIndex(mgo.Index{
+			Key: []string{"$text:username"},
+		})
+		if err != nil {
+			panic(err)
+		}
 	})
-	if err != nil {
-		panic(err)
-	}
+
 }
 
 //User 用户

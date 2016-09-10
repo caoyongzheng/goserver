@@ -5,9 +5,14 @@ import _ from 'lodash'
 export default function actionFactory({ dispatch, getState }) {
   // 获取对应页码用户数据
   function getUserPage(page, pagesize) {
+    const { search } = getState()
+    const data = { page, pagesize }
+    if (search) {
+      data.search = search
+    }
     $.ajax({
       url: '/api/admin/userpage',
-      data: { page, pagesize },
+      data,
       success(result) {
         const { data, success } = result
         if (success) {
@@ -126,7 +131,7 @@ export default function actionFactory({ dispatch, getState }) {
           dOpen: true,
           dUserId: id,
           dUsername: username,
-          confirmTitle: '',
+          comfirmUsername: '',
         },
       })
     }
@@ -161,6 +166,13 @@ export default function actionFactory({ dispatch, getState }) {
     }
   }
 
+  function onSearchChange(search) {
+    dispatch({
+      type: 'OnSearchChange',
+      state: { search },
+    })
+  }
+
   return {
     getUserPage,
     refresh,
@@ -174,5 +186,6 @@ export default function actionFactory({ dispatch, getState }) {
     handleDClose,
     handleDOpen,
     handleComfirmUsernameChange,
+    onSearchChange,
   }
 }

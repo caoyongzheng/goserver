@@ -56,9 +56,9 @@ function verifyAuth({ page, replace, next, nextState }) {
     if (userRole === 0) { // 如果用户为游客
       if (nextState.location.action === 'POP') {  // 如果是重新获取页面
         replace(R.BlogIndex.pathname)
+        next()
       }
       globalAppStores.actions.SignModal.onSignIn()
-      next()
       return
     }
     replace(R.BlogIndex.pathname)
