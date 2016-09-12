@@ -1,20 +1,20 @@
 import React, { PropTypes } from 'react'
 import TextField from 'material-ui/TextField'
 import MDEditor from 'react-mdeditor'
-import { DispatchListener } from 'react-appstores'
+import { DispatchListener } from 'react-store-set'
 import RaisedButton from 'material-ui/RaisedButton'
 
 class BlogEditForm extends React.Component {
   state = {}
-  handleGetBlog = ({ states }) => this.editor.codeMirror.setValue(states.BlogForm.content)
+  handleGetBlog = ({ state }) => this.editor.codeMirror.setValue(state.content)
   render() {
     const { title, handleTitleChange, handleContentChange, content, handleSubmit } = this.props
     return (
       <div>
         <DispatchListener
-          storeName={'BlogForm'}
+          name={'BlogForm'}
           type={'GetBlog'}
-          handle={this.handleGetBlog}
+          handler={this.handleGetBlog}
         />
         <TextField
           hintText="博文标题"

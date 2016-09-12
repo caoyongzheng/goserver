@@ -1,17 +1,17 @@
 import React from 'react'
-import DelBlogModal from './DelBlogModal'
-import { Connector } from 'react-appstores'
+import { Connector } from 'react-store-set'
+import DelBlogModalView from './DelBlogModal'
 
 export default function () {
   return (
     <Connector
-      component={DelBlogModal}
+      component={DelBlogModalView}
       connects={{ DelBlogModal: ['open', 'title'] }}
-      setProps={({ DelBlogModal: { open, title } }) => ({
-        open, title,
-      })}
-      setActions={({ DelBlogModal: { handleClose, delBlog } }) => ({
-        handleClose, delBlog,
+      setProps={({ DelBlogModal }) => ({
+        open: DelBlogModal.state.open,
+        title: DelBlogModal.state.title,
+        handleClose: DelBlogModal.actions.handleClose,
+        delBlog: DelBlogModal.actions.delBlog,
       })}
     />
   )

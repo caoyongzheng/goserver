@@ -1,5 +1,5 @@
 import React from 'react'
-import { globalAppStores } from 'react-appstores'
+import { storeSet } from 'react-store-set'
 import BlogNewForm from './components/BlogNewForm'
 import BlogFormStore from '../../stores/BlogFormStore'
 
@@ -14,10 +14,10 @@ const styles = {
 class BlogNewApp extends React.Component {
   constructor(props) {
     super(props)
-    globalAppStores.addStore('BlogForm', BlogFormStore)
+    storeSet.addStore('BlogForm', BlogFormStore)
   }
   componentWillUnmount() {
-    globalAppStores.delStore('BlogForm')
+    storeSet.delStore('BlogForm')
   }
   render() {
     return (

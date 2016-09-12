@@ -1,5 +1,5 @@
 import React from 'react'
-import { Connector } from 'react-appstores'
+import { Connector } from 'react-store-set'
 
 import DelUserModalView from './DelUserModalView'
 
@@ -8,13 +8,13 @@ function DelUserModal() {
     <Connector
       component={DelUserModalView}
       connects={{ UserAdmin: ['dUsername', 'comfirmUsername', 'dOpen'] }}
-      setProps={(states, actions) => ({
-        open: states.UserAdmin.dOpen,
-        username: states.UserAdmin.dUsername,
-        comfirmUsername: states.UserAdmin.comfirmUsername,
-        handleClose: actions.UserAdmin.handleDClose,
-        handleComfirmUsernameChange: actions.UserAdmin.handleComfirmUsernameChange,
-        handleSubmit: actions.UserAdmin.delUser,
+      setProps={({ UserAdmin }) => ({
+        open: UserAdmin.state.dOpen,
+        username: UserAdmin.state.dUsername,
+        comfirmUsername: UserAdmin.state.comfirmUsername,
+        handleClose: UserAdmin.actions.handleDClose,
+        handleComfirmUsernameChange: UserAdmin.actions.handleComfirmUsernameChange,
+        handleSubmit: UserAdmin.actions.delUser,
       })}
     />
   )

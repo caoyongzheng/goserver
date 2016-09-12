@@ -1,17 +1,18 @@
 import React from 'react'
-import { Connector } from 'react-appstores'
-import LeftNav from './LeftNav'
+import { Connector } from 'react-store-set'
+import LeftNavView from './LeftNav'
+import R from 'R'
 
 export default function () {
   return (
     <Connector
-      component={LeftNav}
-      connects={{ Page: ['page'], LeftNav: ['open'], Auth: ['role'] }}
-      setProps={({ Page: { page }, LeftNav: { open }, Auth: { role } }) => ({
-        page, open, role,
-      })}
-      setActions={({ LeftNav: { handleClose } }) => ({
-        handleClose,
+      component={LeftNavView}
+      connects={{ LeftNav: ['open'], RouterStore: ['location'], Auth: ['role'] }}
+      setProps={({ RouterStore, LeftNav, Auth }) => ({
+        page: R.getPage(RouterStore.state.location.pathname),
+        open: LeftNav.state.open,
+        role: Auth.state.role,
+        handleClose: LeftNav.actions.handleClose,
       })}
     />
   )

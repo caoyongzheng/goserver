@@ -1,31 +1,29 @@
 import React from 'react'
-import BlogView from './BlogView'
 import marked from 'Marked'
 import R from 'R'
-import { Connector, globalAppStores } from 'react-appstores'
+import { Connector } from 'react-store-set'
+import BlogViewView from './BlogView'
 
 export default function () {
   return (
     <Connector
-      component={BlogView}
+      component={BlogViewView}
       connects={{
         BlogView: ['id', 'title', 'content', 'author', 'updateDate', 'viewTimes', 'commentSize'],
         Auth: ['id'],
       }}
-      setProps={({
-        BlogView: { id, title, content, author, updateDate, viewTimes, commentSize }, Auth,
-      }) => ({
-        id,
-        title,
-        html: marked(content),
-        authorName: author.username,
-        authorIcon: author.headerIcon,
-        viewTimes,
-        commentSize,
-        time: updateDate,
-        isOwner: Auth.id === author.id && !! Auth.id,
-        onEdit: () => R.BlogEdit.go({ blogId: id }),
-        onDel: globalAppStores.actions.DelBlogModal.onDelBlog,
+      setProps={({ BlogView, Auth, DelBlogModal }) => ({
+        id: BlogView.state.id,
+        title: BlogView.state.title,
+        html: marked(BlogView.state.content),
+        authorName: BlogView.state.author.username,
+        authorIcon: BlogView.state.author.headerIcon,
+        viewTimes: BlogView.state.viewTimes,
+        commentSize: BlogView.state.commentSize,
+        time: BlogView.state.updateDate,
+        isOwner: Auth.state.id === BlogView.state.author.id && !! Auth.state.id,
+        onEdit: () => R.BlogEdit.go({ blogId: BlogView.state.id }),
+        onDel: DelBlogModal.actions.onDelBlog,
       })}
     />
   )

@@ -1,5 +1,5 @@
 import React from 'react'
-import { globalAppStores, DispatchListener } from 'react-appstores'
+import { storeSet, DispatchListener } from 'react-store-set'
 import Paper from 'material-ui/Paper'
 
 import UserAdminStore from './stores/UserAdminStore'
@@ -11,25 +11,25 @@ import DelUserModal from './components/DelUserModal'
 class UserApp extends React.Component {
   constructor(props) {
     super(props)
-    globalAppStores.addStore('UserAdmin', UserAdminStore)
-    globalAppStores.actions.UserAdmin.getUserPage(1, 10)
+    storeSet.addStore('UserAdmin', UserAdminStore)
+    UserAdminStore.actions.getUserPage(1, 10)
   }
   componentWillUnmount() {
-    globalAppStores.delStore('UserAdmin')
+    storeSet.delStore('UserAdmin')
   }
   render() {
     return (
       <div>
         <Paper style={{ maxWidth: '980px', width: '100%', margin: '30px auto' }}>
           <DispatchListener
-            storeName={'UserAdmin'}
+            name={'UserAdmin'}
             type={'DelUser'}
-            handle={globalAppStores.actions.UserAdmin.refresh}
+            handler={UserAdminStore.actions.refresh}
           />
           <DispatchListener
-            storeName={'UserAdmin'}
+            name={'UserAdmin'}
             type={'NewUser'}
-            handle={globalAppStores.actions.UserAdmin.refresh}
+            handler={UserAdminStore.actions.refresh}
           />
           <Toolbar />
           <UserTable />

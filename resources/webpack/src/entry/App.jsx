@@ -1,66 +1,57 @@
 import React from 'react'
-import { AppStoresProvider, globalAppStores, Connector, DispatchListener } from 'react-appstores'
+import { storeSet, Connector, DispatchListener } from 'react-store-set'
 import { withRouter } from 'react-router'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import Header from './components/Header'
 import SignModalStore from './stores/SignModalStore'
-import PageStore from './stores/PageStore'
 import LeftNavStore from './stores/LeftNavStore'
 import SignModal from './components/SignModal'
 import LeftNav from './components/LeftNav'
 import R from 'R'
 
-globalAppStores.addStore('SignModal', SignModalStore)
-globalAppStores.addStore('Page', PageStore)
-globalAppStores.addStore('LeftNav', LeftNavStore)
+storeSet.addStore('SignModal', SignModalStore)
+storeSet.addStore('LeftNav', LeftNavStore)
 
 class App extends React.Component {
-  constructor(props) {
-    super(props)
-    globalAppStores.actions.Page.setPage(this.props.location.pathname)
-  }
-  componentDidUpdate() {
-    globalAppStores.actions.Page.setPage(this.props.location.pathname)
-  }
-  handleLogout = ({ states }) => {
-    const page = states.Page.page
+  handleLogout = () => {
+    const { location } = storeSet.stores.RouterStore.state
+    const page = R.getPage(location.pathname)
     if (page.auth > 0) {
       R.BlogIndex.go()
     }
   }
-  handleLogin = ({ states }) => {
-    const page = states.Page.page
-    if (page.auth > 2) {
+  handleLogin = () => {
+    const { location } = storeSet.stores.RouterStore.state
+    const page = R.getPage(location.pathname)
+    if (page.auth > 0) {
       R.BlogIndex.go()
     }
   }
   render() {
     const { children } = this.props
     return (
-      <AppStoresProvider appstores={globalAppStores}>
-        <MuiThemeProvider>
-          <div style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%' }}>
-            <DispatchListener storeName="Auth" type="Logout" handle={this.handleLogout} />
-            <DispatchListener storeName="Auth" type="Login" handle={this.handleLogin} />
-            <div>
-              <Header />
-              <SignModal />
-              <LeftNav />
-            </div>
-            <Connector
-              component={({ open }) => (
-                <div
-                  style={{ flex: 1, position: 'relative', marginLeft: `${open ? 250 : 0}px` }}
-                >
-                  {children}
-                </div>
-              )}
-              connects={{ LeftNav: ['open'] }}
-              setProps={({ LeftNav: { open } }) => ({ open })}
-            />
+      <MuiThemeProvider>
+        <div style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%' }}>
+          <DispatchListener name="Auth" type="Logout" handler={this.handleLogout} />
+          <DispatchListener name="Auth" type="Login" handler={this.handleLogin} />
+          <div>
+            <Header />
+            <SignModal />
+            <LeftNav />
           </div>
-        </MuiThemeProvider>
-      </AppStoresProvider>
+          <Connector
+            component={({ open }) => (
+              <div
+                style={{ flex: 1, position: 'relative', marginLeft: `${open ? 250 : 0}px` }}
+              >
+                {children}
+              </div>
+            )}
+            connects={{ LeftNav: ['open'] }}
+            setProps={(stores) => ({ open: stores.LeftNav.state.open })}
+          />
+        </div>
+      </MuiThemeProvider>
     )
   }
 }

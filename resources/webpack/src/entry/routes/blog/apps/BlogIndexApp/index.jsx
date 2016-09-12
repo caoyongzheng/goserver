@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
 import { withRouter } from 'react-router'
-import { globalAppStores, DispatchListener } from 'react-appstores'
+import { storeSet, DispatchListener } from 'react-store-set'
 import BlogStore from './stores/BlogStore'
 import DelBlogModalStore from '../../stores/DelBlogModalStore'
 import BlogList from './components/BlogList'
@@ -22,16 +22,16 @@ const styles = {
 class BlogIndexApp extends React.Component {
   constructor(props) {
     super(props)
-    globalAppStores.addStore('Blog', BlogStore)
-    globalAppStores.addStore('DelBlogModal', DelBlogModalStore)
-    globalAppStores.actions.Blog.getBlogPage({
+    storeSet.addStore('Blog', BlogStore)
+    storeSet.addStore('DelBlogModal', DelBlogModalStore)
+    BlogStore.actions.getBlogPage({
       page: 1, pagesize: 10, ...props.location.query,
     })
   }
   componentWillReceiveProps(nextProps) {
     if (nextProps.location.query !== this.props.location.query) {
-      const { page, pagesize } = globalAppStores.states.Blog
-      globalAppStores.actions.Blog.getBlogPage({
+      const { page, pagesize } = BlogStore.state
+      BlogStore.actions.getBlogPage({
         page,
         pagesize,
         ...nextProps.location.query,
@@ -39,14 +39,14 @@ class BlogIndexApp extends React.Component {
     }
   }
   componentWillUnmount() {
-    globalAppStores.delStore('Blog')
-    globalAppStores.delStore('DelBlogModal')
+    storeSet.delStore('Blog')
+    storeSet.delStore('DelBlogModal')
   }
   getPages = (total, pagesize) =>
   Math.floor(total / pagesize) + Math.ceil(total % pagesize / pagesize)
-  handleDidDelBlog = ({ states }) => {
-    const { page, pagesize, total } = states.Blog
-    globalAppStores.actions.Blog.getBlogPage({
+  handleDidDelBlog = ({ state }) => {
+    const { page, pagesize, total } = state
+    BlogStore.actions.getBlogPage({
       page: Math.max(1, Math.min(this.getPages(total - 1, pagesize), page)),
       pagesize,
       ...this.props.location.query,
@@ -56,9 +56,9 @@ class BlogIndexApp extends React.Component {
     return (
       <div style={styles.stage}>
         <DispatchListener
-          storeName={'DelBlogModal'}
+          name={'DelBlogModal'}
           type={'DelBlog'}
-          handle={this.handleDidDelBlog}
+          handler={this.handleDidDelBlog}
         />
         <div style={styles.blogList}>
           <BlogList getPages={this.getPages} />

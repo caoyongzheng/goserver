@@ -1,15 +1,19 @@
 import React from 'react'
-import BlogForm from '../../../components/BlogForm'
-import { Connector } from 'react-appstores'
+import { Connector } from 'react-store-set'
+import BlogFormView from '../../../components/BlogForm'
 
 export default function BlogNewForm() {
   return (
     <Connector
-      component={BlogForm}
+      component={BlogFormView}
       connects={{ BlogForm: ['title', 'content'] }}
-      setProps={({ BlogForm: { title, content } }) => ({ title, content })}
-      setActions={({ BlogForm: { handleTitleChange, handleContentChange, handleNewSubmit } }) =>
-      ({ handleTitleChange, handleContentChange, handleSubmit: handleNewSubmit })}
+      setProps={({ BlogForm }) => ({
+        title: BlogForm.state.title,
+        content: BlogForm.state.content,
+        handleTitleChange: BlogForm.actions.handleTitleChange,
+        handleContentChange: BlogForm.actions.handleContentChange,
+        handleSubmit: BlogForm.actions.handleNewSubmit,
+      })}
     />
   )
 }

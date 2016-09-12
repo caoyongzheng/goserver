@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
 import Comments from './components/comments/Comments'
-import { globalAppStores, DispatchListener } from 'react-appstores'
+import { storeSet, DispatchListener } from 'react-store-set'
 import DelBlogModalStore from '../../stores/DelBlogModalStore'
 import DelBlogModal from '../../components/DelBlogModal'
 import BlogViewStore from './stores/BlogViewStore'
@@ -23,13 +23,13 @@ const styles = {
 class BlogViewApp extends React.Component {
   constructor(props) {
     super(props)
-    globalAppStores.addStore('BlogView', BlogViewStore)
-    globalAppStores.addStore('DelBlogModal', DelBlogModalStore)
-    globalAppStores.actions.BlogView.getBlog(this.getBlogId())
+    storeSet.addStore('BlogView', BlogViewStore)
+    storeSet.addStore('DelBlogModal', DelBlogModalStore)
+    BlogViewStore.actions.getBlog(this.getBlogId())
   }
   componentWillUnmount() {
-    globalAppStores.delStore('BlogView')
-    globalAppStores.delStore('DelBlogModal')
+    storeSet.delStore('BlogView')
+    storeSet.delStore('DelBlogModal')
   }
   getBlogId = () => this.props.location.query.blogId
   updateViewTimes = () => {
@@ -40,9 +40,9 @@ class BlogViewApp extends React.Component {
     return (
       <div style={styles.stage}>
         <DispatchListener
-          storeName={'BlogView'}
+          name={'BlogView'}
           type={'GetBlog'}
-          handle={this.updateViewTimes}
+          handler={this.updateViewTimes}
         />
         <div style={{ marginTop: '40px' }}>
           <BlogView />

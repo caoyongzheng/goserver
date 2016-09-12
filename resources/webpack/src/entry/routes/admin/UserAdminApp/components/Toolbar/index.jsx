@@ -1,5 +1,5 @@
 import React from 'react'
-import { Connector } from 'react-appstores'
+import { Connector } from 'react-store-set'
 import ToolbarView from './ToolbarView'
 
 export default function Toolbar() {
@@ -7,13 +7,13 @@ export default function Toolbar() {
     <Connector
       component={ToolbarView}
       connects={{ UserAdmin: ['search'] }}
-      setProps={(states, actions) => ({
-        search: states.UserAdmin.search,
-        add: actions.UserAdmin.nHandleOpen,
-        del: actions.UserAdmin.handleDOpen,
-        refresh: actions.UserAdmin.refresh,
-        onSearchChange: actions.UserAdmin.onSearchChange,
-        handleSearch: () => actions.UserAdmin.getUserPage(1, states.UserAdmin.pagesize),
+      setProps={({ UserAdmin }) => ({
+        search: UserAdmin.state.search,
+        add: UserAdmin.actions.nHandleOpen,
+        del: UserAdmin.actions.handleDOpen,
+        refresh: UserAdmin.actions.refresh,
+        onSearchChange: UserAdmin.actions.onSearchChange,
+        handleSearch: () => UserAdmin.actions.getUserPage(1, UserAdmin.state.pagesize),
       })}
     />
   )

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Connector } from 'react-appstores'
+import { Connector } from 'react-store-set'
 import UserDropMenu from './UserDropMenu'
 
 
@@ -7,10 +7,13 @@ export default function () {
   return (
     <Connector
       component={UserDropMenu}
-      setProps={({ Auth: { role } }) => ({ userRole: role })}
-      setActions={({ SignModal: { onSignIn, onSignUp }, Auth: { logout } }) =>
-      ({ onSignIn, onSignUp, logout })}
       connects={{ Auth: ['role'] }}
+      setProps={({ Auth, SignModal }) => ({
+        userRole: Auth.state.role,
+        onSignIn: SignModal.actions.onSignIn,
+        onSignUp: SignModal.actions.onSignUp,
+        logout: Auth.actions.logout,
+      })}
     />
   )
 }

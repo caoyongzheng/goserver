@@ -1,5 +1,5 @@
 import React from 'react'
-import { Connector } from 'react-appstores'
+import { Connector } from 'react-store-set'
 
 import NewUserModalView from './NewUserModalView'
 
@@ -8,14 +8,14 @@ function NewUserModal() {
     <Connector
       component={NewUserModalView}
       connects={{ UserAdmin: ['nOpen', 'nUsername', 'nPassword'] }}
-      setProps={(states, actions) => ({
-        open: states.UserAdmin.nOpen,
-        username: states.UserAdmin.nUsername,
-        password: states.UserAdmin.nPassword,
-        handleClose: actions.UserAdmin.nHandleClose,
-        handleUsernameChange: actions.UserAdmin.handleNUsernameChange,
-        handlePasswordChange: actions.UserAdmin.handleNPasswordChange,
-        handleSubmit: actions.UserAdmin.handleNSubmit,
+      setProps={({ UserAdmin }) => ({
+        open: UserAdmin.state.nOpen,
+        username: UserAdmin.state.nUsername,
+        password: UserAdmin.state.nPassword,
+        handleClose: UserAdmin.actions.nHandleClose,
+        handleUsernameChange: UserAdmin.actions.handleNUsernameChange,
+        handlePasswordChange: UserAdmin.actions.handleNPasswordChange,
+        handleSubmit: UserAdmin.actions.handleNSubmit,
       })}
     />
   )

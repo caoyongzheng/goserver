@@ -1,18 +1,19 @@
 import React from 'react'
-import { Connector } from 'react-appstores'
+import { Connector } from 'react-store-set'
 import Header from './Header'
+import R from 'R'
 
 export default function () {
   return (
     <Connector
       component={Header}
-      connects={{ Auth: ['username', 'headerIcon'], Page: ['page'] }}
-      setProps={(states, actions) => ({
-        username: states.Auth.username,
-        headerIcon: states.Auth.headerIcon,
-        page: states.Page.page,
-        onLeftIconButtonTouchTap: actions.LeftNav.handleToggle,
-        onTitleTouchTap: actions.LeftNav.handleToggle,
+      connects={{ Auth: ['username', 'headerIcon'], RouterStore: ['location'] }}
+      setProps={({ Auth, RouterStore, LeftNav }) => ({
+        username: Auth.state.username,
+        headerIcon: Auth.state.headerIcon,
+        page: R.getPage(RouterStore.state.location.pathname),
+        onLeftIconButtonTouchTap: LeftNav.actions.handleToggle,
+        onTitleTouchTap: LeftNav.actions.handleToggle,
       })}
     />
   )
