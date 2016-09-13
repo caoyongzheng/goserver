@@ -4,6 +4,5 @@
     "DBName":"gotest",
     "resources.imgs":"/resources/gotest/imgs",
     "resources.videos":"/resources/gotest/videos",
-    "assetsAddr":"",
-    "assets":"resources/webpack/assets"
+    "assets":"/gotest-webfont/assets"
 }

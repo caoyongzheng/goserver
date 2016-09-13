@@ -19,10 +19,10 @@ func initRouter() {
 
 	// 注册全局渲染器
 	Router.Use(render.Renderer(render.Options{
-		Directory:  "resources/webpack/assets/template", // Specify what path to load the templates from.
-		Extensions: []string{".tmpl", ".html"},          // Specify extensions to load for templates.
-		Charset:    "UTF-8",                             // Sets encoding for json and html content-types. Default is "UTF-8".
-		IndentJSON: true,                                // Output human readable JSON
+		Directory:  GetConfig("assets") + "/template", // Specify what path to load the templates from.
+		Extensions: []string{".tmpl", ".html"},        // Specify extensions to load for templates.
+		Charset:    "UTF-8",                           // Sets encoding for json and html content-types. Default is "UTF-8".
+		IndentJSON: true,                              // Output human readable JSON
 	}))
 
 	// 回话管理
