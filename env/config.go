@@ -1,32 +1,27 @@
 package env
 
-import (
-	"encoding/json"
-	"github.com/go-martini/martini"
-	"io/ioutil"
-)
+import "github.com/go-martini/martini"
 
-var config map[string]string
-
-func initConfig() {
-	b, err := ioutil.ReadFile(getConfigFilename())
-	checkErr(err)
-
-	err = json.Unmarshal(b, &config)
-	checkErr(err)
+var devConfig = map[string]string{
+	"host":             "localhost",
+	"port":             ":3000",
+	"db.name":          "gotest",
+	"db.host":          "0.0.0.0",
+	"db.port":          "27017",
+	"resources.imgs":   "/resources/gotest/imgs",
+	"resources.videos": "/resources/gotest/videos",
+	"assets":           "/Users/caoyongzheng/Projects/webapps/gotest-webfont/assets",
 }
 
-func checkErr(err error) {
-	if err != nil {
-		panic(err)
-	}
-}
-
-func getConfigFilename() string {
-	if IsDev() {
-		return "env/config/development.json"
-	}
-	return "env/config/production.json"
+var prodConfig = map[string]string{
+	"host":             "localhost",
+	"port":             ":80",
+	"db.name":          "gotest",
+	"db.host":          "0.0.0.0",
+	"db.port":          "27017",
+	"resources.imgs":   "/resources/gotest/imgs",
+	"resources.videos": "/resources/gotest/videos",
+	"assets":           "/gotest/assets",
 }
 
 func IsDev() bool {
@@ -34,5 +29,8 @@ func IsDev() bool {
 }
 
 func GetConfig(key string) string {
-	return config[key]
+	if IsDev() {
+		return devConfig[key]
+	}
+	return prodConfig[key]
 }

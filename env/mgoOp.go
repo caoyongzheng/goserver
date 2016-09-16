@@ -1,17 +1,15 @@
 package env
 
-import (
-	"os"
-
-	"gopkg.in/mgo.v2"
-)
+import "gopkg.in/mgo.v2"
 
 //MgoOpInst
 var MgoOpInst *MgoOp
 
 func initDB() {
-	dbUrl := "mongodb:27017"
-	MgoOpInst = &MgoOp{url: dbUrl, name: GetConfig("DBName")}
+	MgoOpInst = &MgoOp{
+		url:  GetConfig("db.host") + ":" + GetConfig("db.port"),
+		name: GetConfig("db.name"),
+	}
 }
 
 // 数据库操作
@@ -76,11 +74,7 @@ var mgoSession *mgo.Session
 func GetSession() *mgo.Session {
 	if mgoSession == nil {
 		var err error
-		db := os.Getenv("MONGODB_PORT_27017_TCP_ADDR")
-		if db == "" {
-			db = GetConfig("DB")
-		}
-		mgoSession, err = mgo.Dial(db + ":27017")
+		mgoSession, err = mgo.Dial(GetConfig("db.host") + ":" + GetConfig("db.port"))
 		if err != nil {
 			panic(err) //直接终止程序运行
 		}
@@ -93,6 +87,6 @@ func GetSession() *mgo.Session {
 func WitchCollection(collection string, s func(*mgo.Collection)) {
 	session := GetSession()
 	defer session.Close()
-	c := session.DB(GetConfig("DBName")).C(collection)
+	c := session.DB(GetConfig("db.name")).C(collection)
 	s(c)
 }
