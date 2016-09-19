@@ -1,8 +1,0 @@
-{
-    "addr": "localhost",
-    "port": ":80",
-    "DBName":"gotest",
-    "resources.imgs":"/resources/gotest/imgs",
-    "resources.videos":"/resources/gotest/videos",
-    "assets":"/gotest-webfont/assets"
-}
