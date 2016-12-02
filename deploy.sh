@@ -2,7 +2,7 @@
 
 Webfont=/Users/caoyongzheng/Projects/webapps/gotest-webfont
 GoCode=/Users/caoyongzheng/Projects/gocode/src/github.com/caoyongzheng/gotest
-ServerUrl=root@107.170.210.111
+ServerUrl=root@118.178.133.82
 
 cd $Webfont
 
@@ -10,7 +10,7 @@ echo 'build assets'
 npm run prod
 
 echo 'upload assets'
-scp -r $Webfont/assets/  $ServerUrl:/gotest/assets/
+scp -r $Webfont/assets  $ServerUrl:/gotest/assets
 
 cd $GoCode
 
@@ -18,11 +18,14 @@ cd $GoCode
 #git reset HEAD --hard
 #git pull origin master
 
-echo 'build gocode'
+echo 'build gotest'
 CGO_ENABLED=0 GOOS=linux GOARCH=amd64 godep go build
 
-echo 'upload gocode'
+echo 'stop gotest'
+ssh $ServerUrl 'bash -s' < stop.sh
+
+echo 'upload gotest'
 scp $GoCode/gotest $ServerUrl:/gotest/
 
-echo 'restart'
-ssh $ServerUrl 'bash -s' < restart.sh
+echo 'start gotest'
+ssh $ServerUrl 'bash -s' < start.sh

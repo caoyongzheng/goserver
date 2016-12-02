@@ -16,7 +16,7 @@ var devConfig = map[string]string{
 
 var prodConfig = map[string]string{
 	"host":              "localhost",
-	"port":              ":80",
+	"port":              ":3000",
 	"db.name":           "gotest",
 	"db.host":           "0.0.0.0",
 	"db.port":           "27017",
