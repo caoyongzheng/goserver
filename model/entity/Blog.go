@@ -36,6 +36,7 @@ type Blog struct {
 	CreateDate  time.Time `bson:"createDate" json:"createDate" form:"createDate"` //创建日期
 	UpdateDate  time.Time `bson:"updateDate" json:"updateDate" form:"updateDate"` //修改日期
 	AuthorRef   mgo.DBRef `bson:"authorRef" json:"-" form:"-"`                    //作者
+	Visibility  int       `bson:"visibility" json:"visibility" form:"visibility"` //可见性 0:对外可见 1:作者可见
 }
 
 func (b *Blog) GetCollectionName() string {
@@ -62,6 +63,7 @@ func Edit(b Blog) (err error) {
 			"title":      b.Title,
 			"content":    b.Content,
 			"updateDate": b.UpdateDate,
+			"visibility": b.Visibility,
 		}})
 	}
 	env.WitchCollection("Blog", query)

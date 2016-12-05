@@ -1,6 +1,7 @@
 package blog
 
 import (
+	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -84,6 +85,7 @@ func NewBlog(b entity.Blog, sess session.Store, r render.Render, mgoOp *env.MgoO
 
 func verifyNewBlog(b entity.Blog, r render.Render) {
 	if govalidator.IsNull(b.Title) {
+		log.Print(b.Title)
 		r.JSON(200, model.NewResult(false, 0, "博客标题不能为空", nil))
 		return
 	}
@@ -129,11 +131,12 @@ func GetBlogPage(req *http.Request, r render.Render, mgoOp *env.MgoOp) {
 	var total int //博文总的条数
 
 	//query
-	query := bson.M{}
+	query := bson.M{"visibility": bson.M{"$eq": 0}}
 	userId := req.URL.Query().Get("userId")
 	if userId != "" {
 		query["authorRef.$id"] = userId
 	}
+
 	//sort
 	mgoOp.WithDB(func(db *mgo.Database) {
 		total, err = db.C("Blog").Find(query).Count()
