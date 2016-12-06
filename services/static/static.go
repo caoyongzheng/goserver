@@ -5,21 +5,20 @@ import (
 
 	"github.com/caoyongzheng/gotest/env"
 	"github.com/go-martini/martini"
-	"github.com/martini-contrib/render"
 )
 
 func init() {
 	//html
-	env.Router.Get("/", func(r render.Render) {
-		r.Redirect("/app/", http.StatusMovedPermanently)
-	})
+	// env.Router.Get("/", func(r render.Render) {
+	// 	r.Redirect("/app/", http.StatusMovedPermanently)
+	// })
 	// favicon.ico
 	env.Router.Get("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, env.GetConfig("resources.favicon"))
 	})
-	env.Router.Get("/app/**", func(r render.Render) {
-		r.HTML(200, "app", nil)
-	})
+	// env.Router.Get("/app/**", func(r render.Render) {
+	// 	r.HTML(200, "app", nil)
+	// })
 	//webfront js,css,image etc.
 	env.Router.Use(martini.Static(
 		env.GetConfig("assets"),

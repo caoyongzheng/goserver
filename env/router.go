@@ -5,6 +5,7 @@ import (
 
 	"github.com/astaxie/beego/session"
 	"github.com/go-martini/martini"
+	"github.com/martini-contrib/cors"
 	"github.com/martini-contrib/render"
 )
 
@@ -24,7 +25,11 @@ func initRouter() {
 		Charset:    "UTF-8",                           // Sets encoding for json and html content-types. Default is "UTF-8".
 		IndentJSON: true,                              // Output human readable JSON
 	}))
-
+	Router.Use(cors.Allow(&cors.Options{
+		AllowOrigins:     []string{"http://localhost:3001", "http://www.caoyongzheng"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+	}))
 	// 回话管理
 	Router.Use(func(w http.ResponseWriter, r *http.Request, c martini.Context) {
 		sess, _ := Sessions.SessionStart(w, r)
