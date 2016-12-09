@@ -99,7 +99,7 @@ func GetSessionUser(r render.Render, sess session.Store) {
 func getSessionUser(sess session.Store, r render.Render) {
 	u := sess.Get("user")
 	if u == nil {
-		r.JSON(200, entity.User{})
+		r.JSON(200, nil)
 		return
 	}
 	uu := u.(entity.User)
