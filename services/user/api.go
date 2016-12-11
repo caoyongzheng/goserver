@@ -17,4 +17,5 @@ func init() {
 		r.Put("/headerIcon", auth.Great(1), SetHeaderIcon)     //设置用户的头像
 		r.Get("/sessionuser", getSessionUser)                  // 获取当前会话的用户
 	})
+	env.Router.Get("/tokenUser", getTokenUser)
 }

@@ -3,6 +3,7 @@ package user
 import (
 	"crypto/md5"
 	"fmt"
+	"net/http"
 
 	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -37,7 +38,9 @@ func SignIn(u entity.User, r render.Render, sess session.Store, mgoOp *env.MgoOp
 
 	// 3. 添加用户到当前会话
 	sess.Set("user", u)
-	r.JSON(200, map[string]interface{}{"success": true, "desc": "登录成功"})
+	t := env.TokenManager.New()
+	t.SetItem("userId", u.ID)
+	r.JSON(200, map[string]interface{}{"success": true, "desc": "登录成功", "token": t.GetToken()})
 }
 
 //SignUp 注册
@@ -74,12 +77,18 @@ func SignUp(u entity.User, r render.Render, sess session.Store, mgoOp *env.MgoOp
 		return
 	}
 	sess.Set("user", u)
-	r.JSON(200, map[string]interface{}{"success": true, "desc": "注册成功"})
+
+	// 生成Token记录
+	t := env.TokenManager.New()
+	t.SetItem("userId", u.ID)
+	r.JSON(200, map[string]interface{}{"success": true, "desc": "注册成功", "token": t.GetToken()})
 }
 
 //SignOut 登出
-func SignOut(r render.Render, sess session.Store) {
+func SignOut(r render.Render, req *http.Request, sess session.Store) {
 	sess.Delete("user")
+	tokenId := req.Header.Get("token")
+	env.TokenManager.Del(tokenId)
 	r.JSON(200, map[string]interface{}{"success": true, "desc": "登出成功"})
 }
 
@@ -105,4 +114,33 @@ func getSessionUser(sess session.Store, r render.Render) {
 	uu := u.(entity.User)
 	uu.Password = ""
 	r.JSON(200, uu)
+}
+
+func getTokenUser(req *http.Request, r render.Render, mgoOps *env.MgoOp) {
+	tokenId := req.Header.Get("token")
+	if tokenId == "" {
+		r.JSON(200, nil)
+		return
+	}
+	token := env.TokenManager.Get(tokenId)
+	if token == nil {
+		r.JSON(200, nil)
+		return
+	}
+	userId := token.GetItem("userId")
+	if userId == "" {
+		r.JSON(200, nil)
+		return
+	}
+	var u entity.User
+	err := mgoOps.FindId("User", userId, &u)
+	if err != nil {
+		r.JSON(200, nil)
+		return
+	}
+	r.JSON(200, map[string]interface{}{
+		"userId":     u.ID,
+		"headerIcon": u.HeaderIcon,
+		"username":   u.Username,
+	})
 }

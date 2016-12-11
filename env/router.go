@@ -28,6 +28,7 @@ func initRouter() {
 	Router.Use(cors.Allow(&cors.Options{
 		AllowOrigins:     []string{"http://localhost:3001", "http://www.caoyongzheng"},
 		ExposeHeaders:    []string{"Content-Length"},
+		AllowHeaders:     []string{"token", "Content-Type"},
 		AllowCredentials: true,
 	}))
 	// 回话管理
