@@ -8,7 +8,7 @@ import (
 )
 
 type Manager interface {
-	New() Store
+	New() (s Store, err error)
 	Get(token string) Store
 	Del(token string)
 	GC()

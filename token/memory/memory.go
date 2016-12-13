@@ -33,9 +33,9 @@ func NewManager(c Config) token.Manager {
 }
 
 // New 新建一个TokenStore
-func (m *Manager) New() (s token.Store) {
+func (m *Manager) New() (token.Store, error) {
 	t, _ := token.GenerateToken(m.config.TokenLength)
-	s = &Store{
+	s := &Store{
 		token:  t,
 		expire: time.Now().Add(time.Duration(m.config.TokenLife) * time.Second),
 		items:  make(map[string]interface{}),
@@ -43,7 +43,7 @@ func (m *Manager) New() (s token.Store) {
 	m.lock.Lock()
 	defer m.lock.Unlock()
 	m.stores[t] = s
-	return
+	return s, nil
 }
 
 func (m *Manager) Get(t string) token.Store {
