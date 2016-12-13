@@ -82,6 +82,9 @@ func (m *Manager) Get(token string) token.Store {
 }
 
 func (m *Manager) Del(token string) {
+	c := m.pool.Get()
+	defer c.Close()
+	c.Send("DEL", "token_"+token)
 }
 
 func (m *Manager) GC() {

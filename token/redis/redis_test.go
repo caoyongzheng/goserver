@@ -27,3 +27,17 @@ func TestGet(t *testing.T) {
 		t.Error("s`s token should be equal to ns")
 	}
 }
+
+func TestDel(t *testing.T) {
+	m := NewManager(&Config{})
+	s, _ := m.New()
+	s1 := m.Get(s.GetToken())
+	if s1 == nil {
+		t.Error("s1 expected not nil")
+	}
+	m.Del(s.GetToken())
+	s2 := m.Get(s.GetToken())
+	if s2 != nil {
+		t.Errorf("s2 show be nil, but %v", s2)
+	}
+}
