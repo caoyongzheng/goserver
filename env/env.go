@@ -2,7 +2,7 @@ package env
 
 import (
 	"github.com/caoyongzheng/gotest/token"
-	"github.com/caoyongzheng/gotest/token/memory"
+	"github.com/caoyongzheng/gotest/token/redis"
 )
 
 var TokenManager token.Manager
@@ -11,6 +11,6 @@ func init() {
 	initDB()
 	initSessions()
 	initRouter()
-	TokenManager = memory.NewManager(memory.Config{})
+	TokenManager = redis.NewManager(&redis.Config{})
 	go TokenManager.GCLoop()
 }

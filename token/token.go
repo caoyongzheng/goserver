@@ -8,7 +8,7 @@ import (
 )
 
 type Manager interface {
-	New() (s Store, err error)
+	New() Store
 	Get(token string) Store
 	Del(token string)
 	GC()
@@ -18,7 +18,6 @@ type Manager interface {
 type Store interface {
 	GetToken() string
 	GetExpire() time.Time
-	IsExpire() bool
 	GetItem(key string) interface{}
 	SetItem(key string, value interface{})
 	DelItem(key string)

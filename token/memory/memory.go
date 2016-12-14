@@ -7,10 +7,11 @@ import (
 	"github.com/caoyongzheng/gotest/token"
 )
 
+var lock sync.RWMutex
+
 type Manager struct {
 	stores map[string]token.Store
-	config Config
-	lock   sync.RWMutex
+	config *Config
 }
 
 type Config struct {
@@ -19,7 +20,7 @@ type Config struct {
 	GCLife      int64
 }
 
-func NewManager(c Config) token.Manager {
+func NewManager(c *Config) token.Manager {
 	if c.TokenLength < 16 {
 		c.TokenLength = 16
 	}
@@ -33,38 +34,41 @@ func NewManager(c Config) token.Manager {
 }
 
 // New 新建一个TokenStore
-func (m *Manager) New() (token.Store, error) {
+func (m *Manager) New() token.Store {
 	t, _ := token.GenerateToken(m.config.TokenLength)
 	s := &Store{
 		token:  t,
 		expire: time.Now().Add(time.Duration(m.config.TokenLife) * time.Second),
 		items:  make(map[string]interface{}),
 	}
-	m.lock.Lock()
-	defer m.lock.Unlock()
+	lock.Lock()
+	defer lock.Unlock()
 	m.stores[t] = s
-	return s, nil
+	return s
 }
 
 func (m *Manager) Get(t string) token.Store {
-	m.lock.RLock()
-	defer m.lock.RUnlock()
-	return m.stores[t]
+	if s, ok := m.stores[t]; ok {
+		if time.Now().After(s.GetExpire()) {
+			m.Del(t)
+			return nil
+		}
+		return s
+	}
+	return nil
 }
 
 func (m *Manager) Del(t string) {
-	m.lock.Lock()
-	defer m.lock.Unlock()
+	lock.Lock()
+	defer lock.Unlock()
 	delete(m.stores, t)
 }
 
 func (m *Manager) GC() {
-	m.lock.RLock()
-	defer m.lock.RUnlock()
-	for t, s := range m.stores {
-		if s.IsExpire() {
-			delete(m.stores, t)
-		}
+	lock.RLock()
+	defer lock.RUnlock()
+	for t, _ := range m.stores {
+		m.Get(t)
 	}
 }
 
@@ -77,42 +81,34 @@ type Store struct {
 	token  string
 	expire time.Time
 	items  map[string]interface{}
-	lock   sync.RWMutex
 }
 
 func (s *Store) GetToken() string {
-	s.lock.Lock()
-	defer s.lock.Unlock()
+	lock.Lock()
+	defer lock.Unlock()
 	return s.token
 }
 
 func (s *Store) GetExpire() time.Time {
-	s.lock.Lock()
-	defer s.lock.Unlock()
+	lock.Lock()
+	defer lock.Unlock()
 	return s.expire
 }
 
-// IsExpired Token是否过期
-func (s *Store) IsExpire() bool {
-	s.lock.Lock()
-	defer s.lock.Unlock()
-	return time.Now().After(s.expire)
-}
-
 func (s *Store) GetItem(key string) (v interface{}) {
-	s.lock.Lock()
-	defer s.lock.Unlock()
+	lock.Lock()
+	defer lock.Unlock()
 	return s.items[key]
 }
 
 func (s *Store) SetItem(key string, value interface{}) {
-	s.lock.Lock()
-	defer s.lock.Unlock()
+	lock.Lock()
+	defer lock.Unlock()
 	s.items[key] = value
 }
 
 func (s *Store) DelItem(key string) {
-	s.lock.Lock()
-	defer s.lock.Unlock()
+	lock.Lock()
+	defer lock.Unlock()
 	delete(s.items, key)
 }
