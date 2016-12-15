@@ -12,5 +12,4 @@ func init() {
 	initSessions()
 	initRouter()
 	TokenManager = redis.NewManager(&redis.Config{})
-	go TokenManager.GCLoop()
 }

@@ -30,7 +30,9 @@ func NewManager(c *Config) token.Manager {
 	if c.GCLife == 0 {
 		c.GCLife = 3600
 	}
-	return &Manager{stores: make(map[string]token.Store), config: c}
+	m := &Manager{stores: make(map[string]token.Store), config: c}
+	go m.gcLoop()
+	return m
 }
 
 // New 新建一个TokenStore
@@ -64,7 +66,7 @@ func (m *Manager) Del(t string) {
 	delete(m.stores, t)
 }
 
-func (m *Manager) GC() {
+func (m *Manager) gc() {
 	lock.RLock()
 	defer lock.RUnlock()
 	for t, _ := range m.stores {
@@ -72,9 +74,9 @@ func (m *Manager) GC() {
 	}
 }
 
-func (m *Manager) GCLoop() {
-	m.GC()
-	time.AfterFunc(time.Duration(m.config.GCLife)*time.Second, m.GCLoop)
+func (m *Manager) gcLoop() {
+	m.gc()
+	time.AfterFunc(time.Duration(m.config.GCLife)*time.Second, m.gcLoop)
 }
 
 type Store struct {

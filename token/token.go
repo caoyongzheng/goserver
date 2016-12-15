@@ -11,8 +11,6 @@ type Manager interface {
 	New() Store
 	Get(token string) Store
 	Del(token string)
-	GC()
-	GCLoop()
 }
 
 type Store interface {

@@ -88,12 +88,6 @@ func (m *Manager) Del(token string) {
 	c.Send("DEL", "token_"+token)
 }
 
-func (m *Manager) GC() {
-}
-
-func (m *Manager) GCLoop() {
-}
-
 type Store struct {
 	Token string                 `json:"token"`
 	Items map[string]interface{} `json:"items"`
