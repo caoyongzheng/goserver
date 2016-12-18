@@ -30,6 +30,8 @@ func init() {
 		r.Get("/update,viewtimes", updateViewTimes)
 		r.Get("/title", getTitle)
 	})
+	env.Router.Get("/blog", getPage)
+	env.Router.Get("/blog/:blogId", getBlog)
 }
 
 type Result map[string]interface{}
@@ -93,6 +95,112 @@ func verifyNewBlog(b entity.Blog, r render.Render) {
 		r.JSON(200, model.NewResult(false, 0, "博客内容不能为空", nil))
 		return
 	}
+}
+
+func getBlog(params martini.Params, r render.Render, mgoOp *env.MgoOp) {
+	blogID := params["blogId"]
+	data := make(map[string]interface{})
+	var err error
+	mgoOp.WithDB(func(db *mgo.Database) {
+		var b entity.Blog
+		var u entity.User
+		err = db.C("Blog").FindId(blogID).One(&b)
+		if err != nil {
+			return
+		}
+		db.FindRef(&b.AuthorRef).Select(bson.M{
+			"headerIcon": 1,
+			"username":   1,
+		}).One(&u)
+		data["id"] = b.ID
+		data["title"] = b.Title
+		data["content"] = b.Content
+		data["author"] = map[string]interface{}{
+			"headerIcon": u.HeaderIcon, "username": u.Username,
+		}
+		data["views"] = b.ViewTimes
+		data["update"] = b.UpdateDate
+	})
+	if err != nil {
+		r.JSON(200, map[string]interface{}{
+			"success": false, "error": err.Error(),
+		})
+		return
+	}
+	r.JSON(200, map[string]interface{}{
+		"success": true, "data": data,
+	})
+}
+
+func getPage(req *http.Request, r render.Render, mgoOp *env.MgoOp) {
+	var err error
+	// 1. 获取参数：offset, limit, filter
+	var offset, limit int
+	offsetQ := req.URL.Query().Get("offset")
+	if offsetQ != "" {
+		offset, err = strconv.Atoi(req.URL.Query().Get("offsetQ"))
+		if err != nil {
+			r.JSON(200, Result{"success": false, "desc": "解析offset失败"})
+			return
+		}
+	}
+
+	limitQ := req.URL.Query().Get("offset")
+	if limitQ != "" {
+		limit, err = strconv.Atoi(req.URL.Query().Get("limit"))
+		if err != nil {
+			r.JSON(200, Result{"success": false, "desc": "解析limit失败"})
+			return
+		}
+		if limit > 50 {
+			r.JSON(200, Result{"success": false, "desc": "limit不能大于50"})
+		}
+	} else {
+		limit = 15
+	}
+	// 2. 获取分页数据
+	var total int
+	var elems []map[string]interface{}
+
+	filter := bson.M{}
+	mgoOp.WithDB(func(db *mgo.Database) {
+		total, err = db.C("Blog").Find(filter).Count()
+		if err != nil {
+			return
+		}
+		var blogs []entity.Blog
+		err = db.C("Blog").Find(filter).Sort("-updateDate").Skip(offset).Limit(limit).All(&blogs)
+		if err != nil {
+			return
+		}
+		elems = make([]map[string]interface{}, len(blogs))
+		for k, b := range blogs {
+			elem := make(map[string]interface{})
+			elem["id"] = b.ID
+			elem["title"] = b.Title
+			elem["content"] = b.Content
+			var u entity.User
+			db.FindRef(&b.AuthorRef).Select(bson.M{"headerIcon": 1, "username": 1}).One(&u)
+			elem["author"] = map[string]interface{}{
+				"headerIcon": u.HeaderIcon,
+				"username":   u.Username,
+			}
+			elem["views"] = b.ViewTimes
+			elem["update"] = b.UpdateDate
+			elems[k] = elem
+		}
+	})
+	if err != nil {
+		r.JSON(200, Result{"success": false, "desc": err.Error()})
+		return
+	}
+	r.JSON(200, map[string]interface{}{
+		"success": true,
+		"data": map[string]interface{}{
+			"total": total,
+			"blogs": elems,
+		},
+	})
 }
 
 //GetPage 获取分页

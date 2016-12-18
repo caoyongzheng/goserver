@@ -65,7 +65,17 @@ func SignUp(u entity.User, r render.Render, sess session.Store, mgoOp *env.MgoOp
 	// 2. 对用户password进行hash加密
 	u.Password = fmt.Sprintf("%x", md5.Sum([]byte(u.Password)))
 
-	// 3. 添加用户到数据库
+	// 3 验证用户名是否已存在
+	var n int
+	mgoOp.WithC("User", func(c *mgo.Collection) {
+		n, _ = c.Find(bson.M{"username": u.Username}).Count()
+	})
+	if n > 0 {
+		r.JSON(200, map[string]interface{}{"success": false, "desc": "用户名已存在"})
+		return
+	}
+
+	// 4. 添加用户到数据库
 	var err error
 	mgoOp.WithC("User", func(c *mgo.Collection) {
 		u.ID = bson.NewObjectId().Hex()
