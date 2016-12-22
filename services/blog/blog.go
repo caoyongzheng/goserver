@@ -144,14 +144,14 @@ func getPage(req *http.Request, r render.Render, mgoOp *env.MgoOp) {
 }
 
 func newBlog(b entity.Blog, t token.Store, r render.Render, mgoOp *env.MgoOp) {
-	userId := t.GetItem("userId")
-	b.UserId = userId.(string)
+	userID := t.GetItem("userId")
+	b.UserId = userID.(string)
 	b.ID = bson.NewObjectId().Hex()
 	b.CreateDate = time.Now()
 	b.UpdateDate = time.Now()
 	err := mgoOp.Insert(b.GetCollectionName(), &b)
 	if err != nil {
-		r.JSON(200, map[string]interface{}{"success": false})
+		r.JSON(200, map[string]interface{}{"success": false, "msg": err.Error()})
 		return
 	}
 	r.JSON(200, map[string]interface{}{"success": true, "data": b.ID})

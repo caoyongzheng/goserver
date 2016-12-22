@@ -2,6 +2,7 @@ package env
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/astaxie/beego/session"
 	"github.com/caoyongzheng/gotest/token"
@@ -13,6 +14,8 @@ import (
 
 //Router 路由
 var Router *martini.ClassicMartini
+
+// TokenManager 路由管理器
 var TokenManager token.Manager
 
 func initRouter() {
@@ -43,6 +46,10 @@ func initRouter() {
 		defer sess.SessionRelease(w)
 		t := tm.Get(r.Header.Get("token"))
 		c.MapTo(t, (*token.Store)(nil))
+		if t != nil {
+			t.SetExpire(time.Now().Add(3600 * time.Second))
+			return
+		}
 		c.MapTo(sess, (*session.Store)(nil))
 		c.Next()
 	})

@@ -7,20 +7,24 @@ import (
 	"time"
 )
 
+// Manager TokenManager
 type Manager interface {
 	New() Store
 	Get(token string) Store
 	Del(token string)
 }
 
+// Store Token Store
 type Store interface {
 	GetToken() string
 	GetExpire() time.Time
+	SetExpire(t time.Time)
 	GetItem(key string) interface{}
 	SetItem(key string, value interface{})
 	DelItem(key string)
 }
 
+// GenerateToken 产生一个唯一值
 func GenerateToken(l int) (string, error) {
 	if l < 16 {
 		l = 16
