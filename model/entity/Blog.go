@@ -36,6 +36,7 @@ type Blog struct {
 	CreateDate  time.Time `bson:"createDate" json:"createDate" form:"createDate"` //创建日期
 	UpdateDate  time.Time `bson:"updateDate" json:"updateDate" form:"updateDate"` //修改日期
 	AuthorRef   mgo.DBRef `bson:"authorRef" json:"-" form:"-"`                    //作者
+	UserId      string    `bson:"userId" json:"userId" form:"userId"`             // 用户ID
 	Visibility  int       `bson:"visibility" json:"visibility" form:"visibility"` //可见性 0:对外可见 1:作者可见
 }
 

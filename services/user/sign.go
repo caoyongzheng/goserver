@@ -40,6 +40,7 @@ func SignIn(u entity.User, r render.Render, sess session.Store, mgoOp *env.MgoOp
 	sess.Set("user", u)
 	t := env.TokenManager.New()
 	t.SetItem("userId", u.ID)
+	t.SetItem("role", u.Role)
 	r.JSON(200, map[string]interface{}{"success": true, "desc": "登录成功", "token": t.GetToken()})
 }
 
@@ -91,6 +92,7 @@ func SignUp(u entity.User, r render.Render, sess session.Store, mgoOp *env.MgoOp
 	// 生成Token记录
 	t := env.TokenManager.New()
 	t.SetItem("userId", u.ID)
+	t.SetItem("role", u.Role)
 	r.JSON(200, map[string]interface{}{"success": true, "desc": "注册成功", "token": t.GetToken()})
 }
 

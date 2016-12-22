@@ -1,7 +1,6 @@
 package blog
 
 import (
-	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -15,6 +14,7 @@ import (
 	"github.com/caoyongzheng/gotest/model"
 	"github.com/caoyongzheng/gotest/model/entity"
 	"github.com/caoyongzheng/gotest/services/user/auth"
+	"github.com/caoyongzheng/gotest/token"
 	"github.com/go-martini/martini"
 	"github.com/martini-contrib/binding"
 	"github.com/martini-contrib/render"
@@ -32,70 +32,10 @@ func init() {
 	})
 	env.Router.Get("/blog", getPage)
 	env.Router.Get("/blog/:blogId", getBlog)
+	env.Router.Post("/blog", auth.RequireUser, binding.Bind(entity.Blog{}), verifyNewBlog, newBlog)
 }
 
 type Result map[string]interface{}
-
-func getTitle(r render.Render, mgoOp *env.MgoOp, req *http.Request) {
-	// 1. 获取并验证blogId
-	blogId := req.URL.Query().Get("blogId")
-	if blogId == "" {
-		r.JSON(200, map[string]interface{}{"success": false})
-		return
-	}
-	// 2. 根据blogId查询title
-	var b entity.Blog
-	var err error
-	mgoOp.WithC(b.GetCollectionName(), func(c *mgo.Collection) {
-		err = c.FindId(blogId).Select(bson.M{"title": 1}).One(&b)
-	})
-	if err != nil {
-		r.JSON(200, map[string]interface{}{"success": false, "desc": "博文不存在"})
-		return
-	}
-	r.JSON(200, map[string]interface{}{"success": true, "data": b.Title})
-}
-
-// updateViewTimes 更新博文浏览次数
-func updateViewTimes(req *http.Request, mgoOp *env.MgoOp) bool {
-	blogId := req.URL.Query().Get("blogId")
-	if blogId == "" {
-		return false
-	}
-	mgoOp.UpdateId("Blog", blogId, bson.M{"$inc": bson.M{"viewTimes": 1}})
-	return true
-}
-
-//NewBlog 新建博客
-func NewBlog(b entity.Blog, sess session.Store, r render.Render, mgoOp *env.MgoOp) {
-	u := sess.Get("user").(entity.User)
-	b.AuthorRef = mgo.DBRef{
-		Collection: u.CollectionName(),
-		Id:         u.ID,
-		Database:   entity.DBName,
-	}
-	b.ID = bson.NewObjectId().Hex()
-	b.CreateDate = time.Now()
-	b.UpdateDate = time.Now()
-	err := mgoOp.Insert(b.GetCollectionName(), &b)
-	if err != nil {
-		r.JSON(200, map[string]interface{}{"success": false})
-		return
-	}
-	r.JSON(200, map[string]interface{}{"success": true, "data": b.ID})
-}
-
-func verifyNewBlog(b entity.Blog, r render.Render) {
-	if govalidator.IsNull(b.Title) {
-		log.Print(b.Title)
-		r.JSON(200, model.NewResult(false, 0, "博客标题不能为空", nil))
-		return
-	}
-	if govalidator.IsNull(b.Content) {
-		r.JSON(200, model.NewResult(false, 0, "博客内容不能为空", nil))
-		return
-	}
-}
 
 func getBlog(params martini.Params, r render.Render, mgoOp *env.MgoOp) {
 	blogID := params["blogId"]
@@ -201,6 +141,80 @@ func getPage(req *http.Request, r render.Render, mgoOp *env.MgoOp) {
 			"blogs": elems,
 		},
 	})
+}
+
+func newBlog(b entity.Blog, t token.Store, r render.Render, mgoOp *env.MgoOp) {
+	userId := t.GetItem("userId")
+	b.UserId = userId.(string)
+	b.ID = bson.NewObjectId().Hex()
+	b.CreateDate = time.Now()
+	b.UpdateDate = time.Now()
+	err := mgoOp.Insert(b.GetCollectionName(), &b)
+	if err != nil {
+		r.JSON(200, map[string]interface{}{"success": false})
+		return
+	}
+	r.JSON(200, map[string]interface{}{"success": true, "data": b.ID})
+}
+
+func getTitle(r render.Render, mgoOp *env.MgoOp, req *http.Request) {
+	// 1. 获取并验证blogId
+	blogId := req.URL.Query().Get("blogId")
+	if blogId == "" {
+		r.JSON(200, map[string]interface{}{"success": false})
+		return
+	}
+	// 2. 根据blogId查询title
+	var b entity.Blog
+	var err error
+	mgoOp.WithC(b.GetCollectionName(), func(c *mgo.Collection) {
+		err = c.FindId(blogId).Select(bson.M{"title": 1}).One(&b)
+	})
+	if err != nil {
+		r.JSON(200, map[string]interface{}{"success": false, "desc": "博文不存在"})
+		return
+	}
+	r.JSON(200, map[string]interface{}{"success": true, "data": b.Title})
+}
+
+// updateViewTimes 更新博文浏览次数
+func updateViewTimes(req *http.Request, mgoOp *env.MgoOp) bool {
+	blogId := req.URL.Query().Get("blogId")
+	if blogId == "" {
+		return false
+	}
+	mgoOp.UpdateId("Blog", blogId, bson.M{"$inc": bson.M{"viewTimes": 1}})
+	return true
+}
+
+//NewBlog 新建博客
+func NewBlog(b entity.Blog, sess session.Store, r render.Render, mgoOp *env.MgoOp) {
+	u := sess.Get("user").(entity.User)
+	b.AuthorRef = mgo.DBRef{
+		Collection: u.CollectionName(),
+		Id:         u.ID,
+		Database:   entity.DBName,
+	}
+	b.ID = bson.NewObjectId().Hex()
+	b.CreateDate = time.Now()
+	b.UpdateDate = time.Now()
+	err := mgoOp.Insert(b.GetCollectionName(), &b)
+	if err != nil {
+		r.JSON(200, map[string]interface{}{"success": false})
+		return
+	}
+	r.JSON(200, map[string]interface{}{"success": true, "data": b.ID})
+}
+
+func verifyNewBlog(b entity.Blog, r render.Render) {
+	if govalidator.IsNull(b.Title) {
+		r.JSON(200, model.NewResult(false, 0, "博客标题不能为空", nil))
+		return
+	}
+	if govalidator.IsNull(b.Content) {
+		r.JSON(200, model.NewResult(false, 0, "博客内容不能为空", nil))
+		return
+	}
 }
 
 //GetPage 获取分页

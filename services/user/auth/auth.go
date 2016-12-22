@@ -5,6 +5,7 @@ import (
 
 	"github.com/astaxie/beego/session"
 	"github.com/caoyongzheng/gotest/model/entity"
+	"github.com/caoyongzheng/gotest/token"
 	"github.com/go-martini/martini"
 )
 
@@ -50,5 +51,12 @@ func Forbidden(role entity.UserRole) martini.Handler {
 			return
 		}
 		w.WriteHeader(http.StatusForbidden)
+	}
+}
+
+func RequireUser(w http.ResponseWriter, t token.Store) {
+	if t == nil {
+		w.WriteHeader(http.StatusForbidden)
+		return
 	}
 }

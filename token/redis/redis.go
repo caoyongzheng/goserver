@@ -66,6 +66,9 @@ func (m *Manager) New() token.Store {
 }
 
 func (m *Manager) Get(token string) token.Store {
+	if token == "" {
+		return nil
+	}
 	c := m.pool.Get()
 	defer c.Close()
 	v, err := redis.Bytes(c.Do("GET", "token_"+token))

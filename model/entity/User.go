@@ -8,9 +8,12 @@ import (
 type UserRole int
 
 const (
-	Guest  UserRole = 0 //游客
-	Normal UserRole = 2 //普通用户
-	Admin  UserRole = 4 //管理员
+	Guest     UserRole = 0 //游客
+	Normal    UserRole = 2 //普通用户
+	Admin     UserRole = 4 //管理员
+	RoleGuest UserRole = 0 //游客
+	RoleUser  UserRole = 2 //普通用户
+	RoleAdmin UserRole = 4 //管理员
 )
 
 func init() {

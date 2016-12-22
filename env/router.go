@@ -4,6 +4,8 @@ import (
 	"net/http"
 
 	"github.com/astaxie/beego/session"
+	"github.com/caoyongzheng/gotest/token"
+	"github.com/caoyongzheng/gotest/token/redis"
 	"github.com/go-martini/martini"
 	"github.com/martini-contrib/cors"
 	"github.com/martini-contrib/render"
@@ -11,12 +13,16 @@ import (
 
 //Router 路由
 var Router *martini.ClassicMartini
+var TokenManager token.Manager
 
 func initRouter() {
 	Router = martini.Classic()
 
 	// 注册全局mongo数据库服务
 	Router.Map(MgoOpInst)
+
+	TokenManager = redis.NewManager(&redis.Config{})
+	Router.Map(TokenManager)
 
 	// 注册全局渲染器
 	Router.Use(render.Renderer(render.Options{
@@ -32,9 +38,11 @@ func initRouter() {
 		AllowCredentials: true,
 	}))
 	// 回话管理
-	Router.Use(func(w http.ResponseWriter, r *http.Request, c martini.Context) {
+	Router.Use(func(w http.ResponseWriter, r *http.Request, tm token.Manager, c martini.Context) {
 		sess, _ := Sessions.SessionStart(w, r)
 		defer sess.SessionRelease(w)
+		t := tm.Get(r.Header.Get("token"))
+		c.MapTo(t, (*token.Store)(nil))
 		c.MapTo(sess, (*session.Store)(nil))
 		c.Next()
 	})
