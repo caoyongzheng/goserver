@@ -9,30 +9,27 @@ import (
 	"gopkg.in/mgo.v2/bson"
 
 	"github.com/asaskevich/govalidator"
-	"github.com/astaxie/beego/session"
+	"github.com/caoyongzheng/gotest/context"
 	"github.com/caoyongzheng/gotest/env"
 	"github.com/caoyongzheng/gotest/model"
 	"github.com/caoyongzheng/gotest/model/entity"
 	"github.com/caoyongzheng/gotest/services/user/auth"
-	"github.com/caoyongzheng/gotest/token"
 	"github.com/go-martini/martini"
 	"github.com/martini-contrib/binding"
 	"github.com/martini-contrib/render"
 )
 
 func init() {
-	env.Router.Group("/api/blog", func(r martini.Router) {
-		r.Post("", auth.Great(entity.Normal), binding.Bind(entity.Blog{}), verifyNewBlog, NewBlog)
+	env.R.Group("/api/blog", func(r martini.Router) {
 		r.Get("/page", GetBlogPage)
-		r.Get("", GetBlog)
-		r.Put("", auth.Great(entity.Normal), binding.Bind(entity.Blog{}), verifyPutBlog, PutBlog)
-		r.Delete("", auth.Great(entity.Normal), delBlog)
-		r.Get("/update,viewtimes", updateViewTimes)
+		// r.Delete("", auth.Great(entity.Normal), delBlog)
 		r.Get("/title", getTitle)
 	})
-	env.Router.Get("/blog", getPage)
-	env.Router.Get("/blog/:blogId", getBlog)
-	env.Router.Post("/blog", auth.RequireUser, binding.Bind(entity.Blog{}), verifyNewBlog, newBlog)
+	env.R.Get("/blog", getPage)
+	env.R.Get("/blog/:blogId", getBlog)
+	env.R.Put("/blog/:blogId", auth.RequireUser, binding.Bind(entity.Blog{}), verifyPutBlog, PutBlog)
+	env.R.Put("/blog/:blogId/viewtimes", viewTimes)
+	env.R.Post("/blog", auth.RequireUser, binding.Bind(entity.Blog{}), verifyNewBlog, newBlog)
 }
 
 type Result map[string]interface{}
@@ -48,7 +45,12 @@ func getBlog(params martini.Params, r render.Render, mgoOp *env.MgoOp) {
 		if err != nil {
 			return
 		}
-		db.FindRef(&b.AuthorRef).Select(bson.M{
+		if b.UserId != "" {
+			u.ID = b.UserId
+		} else {
+			u.ID = b.AuthorRef.Id.(string)
+		}
+		db.C("User").FindId(u.ID).Select(bson.M{
 			"headerIcon": 1,
 			"username":   1,
 		}).One(&u)
@@ -56,7 +58,7 @@ func getBlog(params martini.Params, r render.Render, mgoOp *env.MgoOp) {
 		data["title"] = b.Title
 		data["content"] = b.Content
 		data["author"] = map[string]interface{}{
-			"headerIcon": u.HeaderIcon, "username": u.Username,
+			"id": u.ID, "headerIcon": u.HeaderIcon, "username": u.Username,
 		}
 		data["views"] = b.ViewTimes
 		data["update"] = b.UpdateDate
@@ -120,8 +122,14 @@ func getPage(req *http.Request, r render.Render, mgoOp *env.MgoOp) {
 			elem["title"] = b.Title
 			elem["content"] = b.Content
 			var u entity.User
-			db.FindRef(&b.AuthorRef).Select(bson.M{"headerIcon": 1, "username": 1}).One(&u)
+			if b.UserId != "" {
+				u.ID = b.UserId
+			} else {
+				u.ID = b.AuthorRef.Id.(string)
+			}
+			db.C("User").FindId(u.ID).Select(bson.M{"headerIcon": 1, "username": 1}).One(&u)
 			elem["author"] = map[string]interface{}{
+				"id":         u.ID,
 				"headerIcon": u.HeaderIcon,
 				"username":   u.Username,
 			}
@@ -143,9 +151,9 @@ func getPage(req *http.Request, r render.Render, mgoOp *env.MgoOp) {
 	})
 }
 
-func newBlog(b entity.Blog, t token.Store, r render.Render, mgoOp *env.MgoOp) {
-	userID := t.GetItem("userId")
-	b.UserId = userID.(string)
+func newBlog(b entity.Blog, ctx *context.Context, r render.Render, mgoOp *env.MgoOp) {
+	userID := ctx.GetUserID()
+	b.UserId = userID
 	b.ID = bson.NewObjectId().Hex()
 	b.CreateDate = time.Now()
 	b.UpdateDate = time.Now()
@@ -157,53 +165,34 @@ func newBlog(b entity.Blog, t token.Store, r render.Render, mgoOp *env.MgoOp) {
 	r.JSON(200, map[string]interface{}{"success": true, "data": b.ID})
 }
 
+func viewTimes(p martini.Params, r render.Render, mgoOp *env.MgoOp) {
+	blogID := p["blogId"]
+	err := mgoOp.UpdateId("Blog", blogID, bson.M{"$inc": bson.M{"viewTimes": 1}})
+	if err != nil {
+		r.JSON(200, map[string]interface{}{"success": false, "msg": err.Error()})
+		return
+	}
+	r.JSON(200, map[string]interface{}{"success": true})
+}
+
 func getTitle(r render.Render, mgoOp *env.MgoOp, req *http.Request) {
-	// 1. 获取并验证blogId
-	blogId := req.URL.Query().Get("blogId")
-	if blogId == "" {
+	// 1. 获取并验证blogID
+	blogID := req.URL.Query().Get("blogId")
+	if blogID == "" {
 		r.JSON(200, map[string]interface{}{"success": false})
 		return
 	}
-	// 2. 根据blogId查询title
+	// 2. 根据blogID查询title
 	var b entity.Blog
 	var err error
 	mgoOp.WithC(b.GetCollectionName(), func(c *mgo.Collection) {
-		err = c.FindId(blogId).Select(bson.M{"title": 1}).One(&b)
+		err = c.FindId(blogID).Select(bson.M{"title": 1}).One(&b)
 	})
 	if err != nil {
 		r.JSON(200, map[string]interface{}{"success": false, "desc": "博文不存在"})
 		return
 	}
 	r.JSON(200, map[string]interface{}{"success": true, "data": b.Title})
-}
-
-// updateViewTimes 更新博文浏览次数
-func updateViewTimes(req *http.Request, mgoOp *env.MgoOp) bool {
-	blogId := req.URL.Query().Get("blogId")
-	if blogId == "" {
-		return false
-	}
-	mgoOp.UpdateId("Blog", blogId, bson.M{"$inc": bson.M{"viewTimes": 1}})
-	return true
-}
-
-//NewBlog 新建博客
-func NewBlog(b entity.Blog, sess session.Store, r render.Render, mgoOp *env.MgoOp) {
-	u := sess.Get("user").(entity.User)
-	b.AuthorRef = mgo.DBRef{
-		Collection: u.CollectionName(),
-		Id:         u.ID,
-		Database:   entity.DBName,
-	}
-	b.ID = bson.NewObjectId().Hex()
-	b.CreateDate = time.Now()
-	b.UpdateDate = time.Now()
-	err := mgoOp.Insert(b.GetCollectionName(), &b)
-	if err != nil {
-		r.JSON(200, map[string]interface{}{"success": false})
-		return
-	}
-	r.JSON(200, map[string]interface{}{"success": true, "data": b.ID})
 }
 
 func verifyNewBlog(b entity.Blog, r render.Render) {
@@ -281,52 +270,22 @@ func GetBlogPage(req *http.Request, r render.Render, mgoOp *env.MgoOp) {
 	return
 }
 
-//GetBlog 获取博客
-func GetBlog(req *http.Request, r render.Render, mgoOp *env.MgoOp) {
-	blogID := req.URL.Query().Get("blogId")
-	if blogID == "" {
-		r.JSON(200, model.NewResult(false, 0, "blogID不能为空", nil))
-		return
-	}
-	var blogElem struct {
-		entity.Blog `bson:",inline"`
-		CommentSize int         `json:"commentSize"`
-		Author      entity.User `json:"author"`
-	}
-	var err error
-	mgoOp.WithDB(func(db *mgo.Database) {
-		err = db.C("Blog").FindId(blogID).One(&blogElem)
-		db.FindRef(&blogElem.AuthorRef).Select(bson.M{
-			"headerIcon": 1,
-			"username":   1,
-		}).One(&blogElem.Author)
-		var bc entity.BlogComment
-		db.C(bc.GetCollectionName()).FindId(blogID).Select(bson.M{"size": 1}).One(&bc)
-		blogElem.CommentSize = bc.Size
-	})
-	if err != nil {
-		r.JSON(200, model.NewResult(false, 0, "博客不存在", nil))
-		return
-	}
-	r.JSON(200, model.NewResult(true, 0, "获取成功", blogElem))
-}
-
 //PutBlog 修改博客（字段为：title,content）
 func PutBlog(b entity.Blog, r render.Render) {
 	err := entity.Edit(b)
 	if err != nil {
-		r.JSON(200, model.NewResult(false, 0, "修改博客失败", nil))
+		r.JSON(200, map[string]interface{}{"success": false, "msg": "修改博客失败"})
 	}
-	r.JSON(200, model.NewResult(true, 0, "修改博客成功", nil))
+	r.JSON(200, map[string]interface{}{"success": true, "msg": "修改博客成功"})
 }
 
-func verifyPutBlog(b entity.Blog, r render.Render, sess session.Store) {
+func verifyPutBlog(b entity.Blog, r render.Render, ctx *context.Context) {
 	originBlog, err := entity.GetByID(b.ID)
 	if err != nil {
 		r.JSON(200, model.NewResult(false, 0, "博客不存在，修改失败", nil))
 		return
 	}
-	if originBlog.AuthorRef.Id != sess.Get("user").(entity.User).ID {
+	if originBlog.UserId != ctx.GetUserID() {
 		r.JSON(http.StatusForbidden, model.NewResult(false, 0, "没权权限修改博客博客", nil))
 		return
 	}
@@ -341,7 +300,7 @@ func verifyPutBlog(b entity.Blog, r render.Render, sess session.Store) {
 }
 
 // delBlog 完全删除博文(包括评论)
-func delBlog(req *http.Request, r render.Render, mgoOp *env.MgoOp, sess session.Store) {
+func delBlog(req *http.Request, r render.Render, mgoOp *env.MgoOp, ctx *context.Context) {
 	/**
 	 * 1. 读取blogId
 	 * 2. 验证权限(当前用户是否是博文拥有者)
@@ -362,7 +321,7 @@ func delBlog(req *http.Request, r render.Render, mgoOp *env.MgoOp, sess session.
 		r.JSON(200, map[string]interface{}{"success": false, "desc": "博文不存在", "error": err.Error()})
 		return
 	}
-	u := sess.Get("user").(entity.User)
+	u := ctx.GetUser()
 	if u.ID != b.AuthorRef.Id {
 		r.JSON(200, map[string]interface{}{"success": false, "desc": "权限不足"})
 		return

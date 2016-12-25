@@ -7,7 +7,7 @@ import (
 	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 
-	"github.com/astaxie/beego/session"
+	"github.com/caoyongzheng/gotest/context"
 	"github.com/caoyongzheng/gotest/env"
 	"github.com/caoyongzheng/gotest/model"
 	"github.com/caoyongzheng/gotest/model/entity"
@@ -18,8 +18,8 @@ import (
 )
 
 func init() {
-	env.Router.Group("/api/blogComment", func(r martini.Router) {
-		r.Post("", auth.Great(1), binding.Bind(PostComment{}), verifyAddComment, AddComment)
+	env.R.Group("/api/blogComment", func(r martini.Router) {
+		r.Post("", auth.RequireUser, binding.Bind(PostComment{}), verifyAddComment, AddComment)
 		r.Get("", verifyPageQuery, Get)
 	})
 }
@@ -31,8 +31,8 @@ type PostComment struct {
 }
 
 //AddComment 添加评论
-func AddComment(pc PostComment, sess session.Store, r render.Render, req *http.Request) {
-	u := sess.Get("user").(entity.User)
+func AddComment(pc PostComment, ctx *context.Context, r render.Render, req *http.Request) {
+	u := ctx.GetUser()
 	pc.UserID = u.ID
 	newC, err := entity.AddCommont(pc.BlogID, pc.Comment)
 	if err != nil {

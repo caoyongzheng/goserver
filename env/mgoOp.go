@@ -2,7 +2,7 @@ package env
 
 import "gopkg.in/mgo.v2"
 
-//MgoOpInst
+// MgoOpInst 数据库操作实例
 var MgoOpInst *MgoOp
 
 func initDB() {
@@ -12,7 +12,7 @@ func initDB() {
 	}
 }
 
-// 数据库操作
+// MgoOp 数据库操作
 type MgoOp struct {
 	url     string
 	name    string

@@ -17,7 +17,7 @@ import (
 )
 
 func init() {
-	env.Router.Group("/api/admin", func(r martini.Router) {
+	env.R.Group("/api/admin", func(r martini.Router) {
 		r.Get("/userpage", auth.Great(entity.Admin), getUserPage)
 		r.Delete("/user/:userId", auth.Great(entity.Admin), delUser)
 		r.Post("/user", auth.Great(entity.Admin), binding.Bind(entity.User{}), addUser)

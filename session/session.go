@@ -1,4 +1,4 @@
-package token
+package session
 
 import (
 	"crypto/rand"
@@ -7,21 +7,16 @@ import (
 	"time"
 )
 
-// Manager TokenManager
-type Manager interface {
-	New() Store
-	Get(token string) Store
-	Del(token string)
-}
-
-// Store Token Store
-type Store interface {
-	GetToken() string
-	GetExpire() time.Time
-	SetExpire(t time.Time)
-	GetItem(key string) interface{}
-	SetItem(key string, value interface{})
-	DelItem(key string)
+// Provider Session
+type Provider interface {
+	New() (string, error)
+	IsExist(token string) bool
+	Del(token string) error
+	GetExpire(token string) time.Time
+	SetExpire(token string, t time.Time) error
+	GetItems(token string) map[string]string
+	GetItem(token, key string) string
+	SetItem(token, key, value string) error
 }
 
 // GenerateToken 产生一个唯一值

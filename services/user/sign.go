@@ -8,14 +8,14 @@ import (
 	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 
-	"github.com/astaxie/beego/session"
+	"github.com/caoyongzheng/gotest/context"
 	"github.com/caoyongzheng/gotest/env"
 	"github.com/caoyongzheng/gotest/model/entity"
 	"github.com/martini-contrib/render"
 )
 
 //SignIn 登录
-func SignIn(u entity.User, r render.Render, sess session.Store, mgoOp *env.MgoOp) {
+func SignIn(u entity.User, r render.Render, mgoOp *env.MgoOp, ctx *context.Context) {
 	/**
 	 * 1. 对用户password进行hash加密
 	 * 2. 查找数据库，验证Username和password 是否匹配
@@ -37,15 +37,13 @@ func SignIn(u entity.User, r render.Render, sess session.Store, mgoOp *env.MgoOp
 	}
 
 	// 3. 添加用户到当前会话
-	sess.Set("user", u)
-	t := env.TokenManager.New()
-	t.SetItem("userId", u.ID)
-	t.SetItem("role", u.Role)
-	r.JSON(200, map[string]interface{}{"success": true, "desc": "登录成功", "token": t.GetToken()})
+	token, _ := ctx.P.New()
+	ctx.P.SetItem(token, "userId", u.ID)
+	r.JSON(200, map[string]interface{}{"success": true, "desc": "登录成功", "token": token})
 }
 
 //SignUp 注册
-func SignUp(u entity.User, r render.Render, sess session.Store, mgoOp *env.MgoOp) {
+func SignUp(u entity.User, r render.Render, mgoOp *env.MgoOp, ctx *context.Context) {
 	/**
 	 * 1. 验证提交用户(username, password)
 	 * 2. 对用户password进行hash加密
@@ -87,65 +85,28 @@ func SignUp(u entity.User, r render.Render, sess session.Store, mgoOp *env.MgoOp
 		r.JSON(200, map[string]interface{}{"success": false, "desc": "添加用户到数据库失败", "error": err.Error()})
 		return
 	}
-	sess.Set("user", u)
 
 	// 生成Token记录
-	t := env.TokenManager.New()
-	t.SetItem("userId", u.ID)
-	t.SetItem("role", u.Role)
-	r.JSON(200, map[string]interface{}{"success": true, "desc": "注册成功", "token": t.GetToken()})
+	token, _ := ctx.P.New()
+	ctx.P.SetItem(token, "userId", u.ID)
+	r.JSON(200, map[string]interface{}{"success": true, "desc": "注册成功", "token": token})
 }
 
 //SignOut 登出
-func SignOut(r render.Render, req *http.Request, sess session.Store) {
-	sess.Delete("user")
-	tokenId := req.Header.Get("token")
-	env.TokenManager.Del(tokenId)
+func SignOut(r render.Render, req *http.Request, ctx *context.Context) {
+	token := req.Header.Get("token")
+	ctx.P.Del(token)
 	r.JSON(200, map[string]interface{}{"success": true, "desc": "登出成功"})
 }
 
-//GetSessionUser 获取当前会话用户old
-func GetSessionUser(r render.Render, sess session.Store) {
-	u := sess.Get("user")
-	if u == nil {
-		r.JSON(200, map[string]interface{}{"success": false, "desc": "用户不存在"})
-		return
-	}
-	uu := u.(entity.User)
-	uu.Password = ""
-	r.JSON(200, map[string]interface{}{"success": true, "desc": "用户存在", "data": uu})
-}
-
-// getSessionUser 获取当前会话用户
-func getSessionUser(sess session.Store, r render.Render) {
-	u := sess.Get("user")
-	if u == nil {
-		r.JSON(200, nil)
-		return
-	}
-	uu := u.(entity.User)
-	uu.Password = ""
-	r.JSON(200, uu)
-}
-
-func getTokenUser(req *http.Request, r render.Render, mgoOps *env.MgoOp) {
-	tokenId := req.Header.Get("token")
-	if tokenId == "" {
-		r.JSON(200, nil)
-		return
-	}
-	token := env.TokenManager.Get(tokenId)
-	if token == nil {
-		r.JSON(200, nil)
-		return
-	}
-	userId := token.GetItem("userId")
-	if userId == "" {
+func getTokenUser(req *http.Request, r render.Render, mgoOps *env.MgoOp, ctx *context.Context) {
+	userID := ctx.GetUserID()
+	if userID == "" {
 		r.JSON(200, nil)
 		return
 	}
 	var u entity.User
-	err := mgoOps.FindId("User", userId, &u)
+	err := mgoOps.FindId("User", userID, &u)
 	if err != nil {
 		r.JSON(200, nil)
 		return

@@ -17,7 +17,7 @@ import (
 type Result map[string]interface{}
 
 func init() {
-	env.Router.Group("/api/novel", func(r martini.Router) {
+	env.R.Group("/api/novel", func(r martini.Router) {
 		r.Post("", auth.Great(1), binding.Bind(Novel{}), AddNovel)
 		r.Get("/userId/:userId", GetUserNovelsHandler)
 		r.Get("/catalog/:novelId", GetCatalogHandler)

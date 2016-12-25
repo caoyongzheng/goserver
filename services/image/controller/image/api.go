@@ -16,7 +16,7 @@ import (
 )
 
 func init() {
-	env.Router.Group("/api/image", func(r martini.Router) {
+	env.R.Group("/api/image", func(r martini.Router) {
 		r.Post("/add", AddImage)
 	})
 }

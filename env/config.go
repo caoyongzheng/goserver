@@ -26,10 +26,12 @@ var prodConfig = map[string]string{
 	"assets":            "/gotest/assets",
 }
 
+// IsDev 是否是开发环境
 func IsDev() bool {
 	return martini.Env == martini.Dev
 }
 
+// GetConfig 获取配置信息
 func GetConfig(key string) string {
 	if IsDev() {
 		return devConfig[key]
