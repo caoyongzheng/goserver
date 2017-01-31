@@ -5,8 +5,6 @@ import (
 	"github.com/caoyongzheng/gotest/env"
 	// _ "github.com/caoyongzheng/gotest/services/admin"
 	_ "github.com/caoyongzheng/gotest/services/blog"
-	// _ "github.com/caoyongzheng/gotest/services/image/controller/image"
-	_ "github.com/caoyongzheng/gotest/services/static"
 	_ "github.com/caoyongzheng/gotest/services/user"
 	"github.com/caoyongzheng/gotest/session/redis"
 )
@@ -16,5 +14,5 @@ func main() {
 	env.R.Map(env.MgoOpInst)
 	// 提供会话管理器
 	env.R.Use(context.EnableContext(redis.New()))
-	env.R.RunOnAddr(env.GetConfig("port"))
+	env.R.RunOnAddr(env.GetHost())
 }

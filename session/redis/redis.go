@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"time"
 
+	"github.com/caoyongzheng/gotest/env"
 	"github.com/caoyongzheng/gotest/session"
 	"github.com/garyburd/redigo/redis"
 )
@@ -19,7 +20,7 @@ func New() session.Provider {
 		pool: &redis.Pool{
 			MaxIdle:     3,
 			IdleTimeout: 240 * time.Second,
-			Dial:        func() (redis.Conn, error) { return redis.Dial("tcp", "0.0.0.0:6379") },
+			Dial:        func() (redis.Conn, error) { return redis.Dial("tcp", env.GetRedisAddr()) },
 		},
 	}
 }

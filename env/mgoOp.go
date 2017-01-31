@@ -7,8 +7,8 @@ var MgoOpInst *MgoOp
 
 func initDB() {
 	MgoOpInst = &MgoOp{
-		url:  GetConfig("db.host") + ":" + GetConfig("db.port"),
-		name: GetConfig("db.name"),
+		url:  GetMongoDBAddr(),
+		name: GetMongoDBName(),
 	}
 }
 
@@ -74,7 +74,7 @@ var mgoSession *mgo.Session
 func GetSession() *mgo.Session {
 	if mgoSession == nil {
 		var err error
-		mgoSession, err = mgo.Dial(GetConfig("db.host") + ":" + GetConfig("db.port"))
+		mgoSession, err = mgo.Dial(GetMongoDBAddr())
 		if err != nil {
 			panic(err) //直接终止程序运行
 		}
@@ -87,6 +87,6 @@ func GetSession() *mgo.Session {
 func WitchCollection(collection string, s func(*mgo.Collection)) {
 	session := GetSession()
 	defer session.Close()
-	c := session.DB(GetConfig("db.name")).C(collection)
+	c := session.DB(GetMongoDBName()).C(collection)
 	s(c)
 }

@@ -13,13 +13,11 @@ func initRouter() {
 	R = martini.Classic()
 	// 注册全局渲染器
 	R.Use(render.Renderer(render.Options{
-		Directory:  GetConfig("assets") + "/template", // Specify what path to load the templates from.
-		Extensions: []string{".tmpl", ".html"},        // Specify extensions to load for templates.
-		Charset:    "UTF-8",                           // Sets encoding for json and html content-types. Default is "UTF-8".
-		IndentJSON: true,                              // Output human readable JSON
+		Charset:    "UTF-8", // Sets encoding for json and html content-types. Default is "UTF-8".
+		IndentJSON: true,    // Output human readable JSON
 	}))
 	R.Use(cors.Allow(&cors.Options{
-		AllowOrigins:     []string{"http://localhost:3001", "http://www.caoyongzheng"},
+		AllowOrigins:     []string{"http://localhost:3001", "http://www.caoyongzheng.com"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowMethods:     []string{"POST", "PUT"},
 		AllowHeaders:     []string{"token", "Content-Type"},

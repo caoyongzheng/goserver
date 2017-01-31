@@ -285,7 +285,7 @@ func verifyPutBlog(b entity.Blog, r render.Render, ctx *context.Context) {
 		r.JSON(200, model.NewResult(false, 0, "博客不存在，修改失败", nil))
 		return
 	}
-	if originBlog.UserId != ctx.GetUserID() {
+	if originBlog.UserId != ctx.GetUserID() && originBlog.AuthorRef.Id != ctx.GetUserID() {
 		r.JSON(http.StatusForbidden, model.NewResult(false, 0, "没权权限修改博客博客", nil))
 		return
 	}
