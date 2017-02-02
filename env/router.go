@@ -1,6 +1,8 @@
 package env
 
 import (
+	"time"
+
 	"github.com/go-martini/martini"
 	"github.com/martini-contrib/cors"
 	"github.com/martini-contrib/render"
@@ -22,5 +24,6 @@ func initRouter() {
 		AllowMethods:     []string{"POST", "PUT"},
 		AllowHeaders:     []string{"token", "Content-Type"},
 		AllowCredentials: true,
+		MaxAge:           3600 * 24 * 30 * time.Second,
 	}))
 }
