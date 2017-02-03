@@ -1,6 +1,7 @@
 package context
 
 import (
+	"log"
 	"net/http"
 	"time"
 
@@ -36,12 +37,13 @@ func (c *Context) GetUserID() string {
 }
 
 // GetUser 获取当前用户
-func (c *Context) GetUser() (u *entity.User) {
+func (c *Context) GetUser() (u entity.User) {
 	var userID = c.GetUserID()
+	log.Println(userID)
 	if userID == "" {
 		return
 	}
-	c.MgoOp.FindId("User", userID, u)
+	c.MgoOp.FindId("User", userID, &u)
 	return
 }
 

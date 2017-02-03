@@ -1,6 +1,8 @@
 package user
 
 import (
+	"encoding/json"
+	"log"
 	"net/http"
 
 	"github.com/caoyongzheng/gotest/context"
@@ -12,20 +14,25 @@ import (
 
 //SetHeaderIcon 设置用户的头像
 func SetHeaderIcon(req *http.Request, ctx *context.Context, r render.Render, mgoOp *env.MgoOp) {
-	req.ParseForm()
-	filename := req.FormValue("filename")
-
-	u := ctx.GetUser()
 	var err error
+	payload := map[string]string{}
+	err = json.NewDecoder(req.Body).Decode(&payload)
+	if err != nil {
+		r.JSON(200, map[string]interface{}{"success": false, "desc": "failed to parse payload"})
+		return
+	}
+
+	headerIcon := payload["headerIcon"]
+	u := ctx.GetUser()
+	log.Println(u)
 	mgoOp.WithC("User", func(c *mgo.Collection) {
 		err = c.UpdateId(u.ID, bson.M{
-			"$set": bson.M{"headerIcon": filename},
+			"$set": bson.M{"headerIcon": headerIcon},
 		})
 	})
 	if err != nil {
 		r.JSON(200, map[string]interface{}{"success": false, "desc": "更新头像失败"})
 		return
 	}
-	u.HeaderIcon = filename
-	r.JSON(200, map[string]interface{}{"success": true, "desc": "更新头像成功", "data": filename})
+	r.JSON(200, map[string]interface{}{"success": true, "desc": "更新头像成功", "data": headerIcon})
 }

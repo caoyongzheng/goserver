@@ -30,6 +30,7 @@ func init() {
 	env.R.Put("/blog/:blogId", auth.RequireUser, binding.Bind(entity.Blog{}), verifyPutBlog, PutBlog)
 	env.R.Put("/blog/:blogId/viewtimes", viewTimes)
 	env.R.Post("/blog", auth.RequireUser, binding.Bind(entity.Blog{}), verifyNewBlog, newBlog)
+	env.R.Delete("/blog", auth.RequireUser, delBlog)
 }
 
 type Result map[string]interface{}
@@ -322,7 +323,7 @@ func delBlog(req *http.Request, r render.Render, mgoOp *env.MgoOp, ctx *context.
 		return
 	}
 	u := ctx.GetUser()
-	if u.ID != b.AuthorRef.Id {
+	if u.ID != b.UserId {
 		r.JSON(200, map[string]interface{}{"success": false, "desc": "权限不足"})
 		return
 	}

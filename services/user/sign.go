@@ -3,7 +3,6 @@ package user
 import (
 	"crypto/md5"
 	"fmt"
-	"log"
 	"net/http"
 
 	mgo "gopkg.in/mgo.v2"
@@ -112,7 +111,7 @@ func getTokenUser(req *http.Request, r render.Render, mgoOps *env.MgoOp, ctx *co
 		r.JSON(200, nil)
 		return
 	}
-	log.Println(u)
+
 	r.JSON(200, map[string]interface{}{
 		"userId":     u.ID,
 		"headerIcon": u.HeaderIcon,
