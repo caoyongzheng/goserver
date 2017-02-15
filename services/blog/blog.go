@@ -1,6 +1,9 @@
 package blog
 
 import (
+	"bytes"
+	"encoding/json"
+	"io/ioutil"
 	"net/http"
 	"strconv"
 	"time"
@@ -33,15 +36,16 @@ func init() {
 	env.R.Delete("/blog", auth.RequireUser, delBlog)
 }
 
+// Result 返回结果
 type Result map[string]interface{}
 
-func getBlog(params martini.Params, r render.Render, mgoOp *env.MgoOp) {
+func getBlog(params martini.Params, r render.Render, mgoOp *env.MgoOp, req *http.Request) {
 	blogID := params["blogId"]
 	data := make(map[string]interface{})
 	var err error
+	var b entity.Blog
+	var u entity.User
 	mgoOp.WithDB(func(db *mgo.Database) {
-		var b entity.Blog
-		var u entity.User
 		err = db.C("Blog").FindId(blogID).One(&b)
 		if err != nil {
 			return
@@ -69,6 +73,26 @@ func getBlog(params martini.Params, r render.Render, mgoOp *env.MgoOp) {
 			"success": false, "error": err.Error(),
 		})
 		return
+	}
+	marked := req.URL.Query().Get("marked")
+	if marked != "" {
+		pd, _ := json.Marshal(map[string]string{"md": b.Content})
+		res, err := http.Post("http://0.0.0.0:3100/marked", "application/json", bytes.NewReader(pd))
+		if err != nil {
+			r.JSON(200, map[string]interface{}{
+				"success": false, "error": err.Error(),
+			})
+			return
+		}
+		defer res.Body.Close()
+		body, err := ioutil.ReadAll(res.Body)
+		if err != nil {
+			r.JSON(200, map[string]interface{}{
+				"success": false, "error": err.Error(),
+			})
+			return
+		}
+		data["content"] = string(body)
 	}
 	r.JSON(200, map[string]interface{}{
 		"success": true, "data": data,
@@ -207,7 +231,7 @@ func verifyNewBlog(b entity.Blog, r render.Render) {
 	}
 }
 
-//GetPage 获取分页
+//GetBlogPage 获取分页
 func GetBlogPage(req *http.Request, r render.Render, mgoOp *env.MgoOp) {
 	/**
 	 * 1. 获取blog页码('page')和每页大小('pagesize'),如不存在则返回错误
@@ -244,9 +268,9 @@ func GetBlogPage(req *http.Request, r render.Render, mgoOp *env.MgoOp) {
 
 	//query
 	query := bson.M{"visibility": bson.M{"$eq": 0}}
-	userId := req.URL.Query().Get("userId")
-	if userId != "" {
-		query["authorRef.$id"] = userId
+	userID := req.URL.Query().Get("userId")
+	if userID != "" {
+		query["authorRef.$id"] = userID
 	}
 
 	//sort

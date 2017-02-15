@@ -6,6 +6,7 @@ import (
 	// _ "github.com/caoyongzheng/gotest/services/admin"
 	_ "github.com/caoyongzheng/gotest/services/blog"
 	_ "github.com/caoyongzheng/gotest/services/user"
+	_ "github.com/caoyongzheng/gotest/services/utils"
 	"github.com/caoyongzheng/gotest/session/redis"
 )
 
