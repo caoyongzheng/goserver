@@ -19,7 +19,10 @@ func initRouter() {
 		IndentJSON: true,    // Output human readable JSON
 	}))
 	R.Use(cors.Allow(&cors.Options{
-		AllowOrigins:     []string{"*"},
+		AllowOrigins: []string{
+			"https://www.caoyongzheng.com",
+			"https://caoyongzheng.github.io",
+		},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowMethods:     []string{"POST", "PUT", "DELETE", "GET"},
 		AllowHeaders:     []string{"token", "Content-Type"},
