@@ -1,9 +1,6 @@
 package blog
 
 import (
-	"bytes"
-	"encoding/json"
-	"io/ioutil"
 	"net/http"
 	"strconv"
 	"time"
@@ -74,26 +71,26 @@ func getBlog(params martini.Params, r render.Render, mgoOp *env.MgoOp, req *http
 		})
 		return
 	}
-	marked := req.URL.Query().Get("marked")
-	if marked != "" {
-		pd, _ := json.Marshal(map[string]string{"md": b.Content})
-		res, err := http.Post("http://0.0.0.0:3100/marked", "application/json", bytes.NewReader(pd))
-		if err != nil {
-			r.JSON(200, map[string]interface{}{
-				"success": false, "error": err.Error(),
-			})
-			return
-		}
-		defer res.Body.Close()
-		body, err := ioutil.ReadAll(res.Body)
-		if err != nil {
-			r.JSON(200, map[string]interface{}{
-				"success": false, "error": err.Error(),
-			})
-			return
-		}
-		data["content"] = string(body)
-	}
+	// marked := req.URL.Query().Get("marked")
+	// if marked != "" {
+	// 	pd, _ := json.Marshal(map[string]string{"md": b.Content})
+	// 	res, err := http.Post("http://0.0.0.0:3100/marked", "application/json", bytes.NewReader(pd))
+	// 	if err != nil {
+	// 		r.JSON(200, map[string]interface{}{
+	// 			"success": false, "error": err.Error(),
+	// 		})
+	// 		return
+	// 	}
+	// 	defer res.Body.Close()
+	// 	body, err := ioutil.ReadAll(res.Body)
+	// 	if err != nil {
+	// 		r.JSON(200, map[string]interface{}{
+	// 			"success": false, "error": err.Error(),
+	// 		})
+	// 		return
+	// 	}
+	// 	data["content"] = string(body)
+	// }
 	r.JSON(200, map[string]interface{}{
 		"success": true, "data": data,
 	})

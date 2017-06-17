@@ -4,7 +4,7 @@ import "flag"
 
 var host = flag.String("host", "127.0.0.1:3000", "server listen address")
 var mongodbName = flag.String("momgodbName", "gotest", "momgodb名字")
-var mongodbAddr = flag.String("momgodbAddr", "mongodb://caoyongzheng:123456@0.0.0.0:27017", "mongo地址")
+var mongodbAddr = flag.String("momgodbAddr", "0.0.0.0:27017", "mongo地址")
 var redisAddr = flag.String("redisAddr", "0.0.0.0:6379", "redis地址")
 
 // GetHost 监听地址
