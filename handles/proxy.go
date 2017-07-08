@@ -2,7 +2,6 @@ package handles
 
 import (
 	"io/ioutil"
-	"log"
 	"net/http"
 	"time"
 )
@@ -15,7 +14,6 @@ func HandleProxy(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
 		url := r.URL.Query().Get("url")
-		log.Println(url)
 		if url == "" {
 			w.WriteHeader(http.StatusBadRequest)
 			return
