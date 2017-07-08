@@ -3,8 +3,8 @@ package entity
 import (
 	"time"
 
-	"github.com/caoyongzheng/gotest/env"
-	"github.com/caoyongzheng/gotest/model"
+	"github.com/caoyongzheng/goserver/env"
+	"github.com/caoyongzheng/goserver/model"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )

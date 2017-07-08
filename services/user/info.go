@@ -5,8 +5,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/caoyongzheng/gotest/context"
-	"github.com/caoyongzheng/gotest/env"
+	"github.com/caoyongzheng/goserver/context"
+	"github.com/caoyongzheng/goserver/env"
 	"github.com/martini-contrib/render"
 	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"

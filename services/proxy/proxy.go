@@ -5,7 +5,7 @@ import (
 	"net/http/httputil"
 	"net/url"
 
-	"github.com/caoyongzheng/gotest/env"
+	"github.com/caoyongzheng/goserver/env"
 )
 
 func init() {

@@ -1,9 +1,3 @@
-node_modules/
 vendor/
-tmp/*
 *.log
-tmp/
-demo/
-assets/
-gotest
-tmp/runner-build
+bin/

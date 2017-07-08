@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/caoyongzheng/gotest/env"
-	"github.com/caoyongzheng/gotest/session"
+	"github.com/caoyongzheng/goserver/env"
+	"github.com/caoyongzheng/goserver/session"
 	"github.com/garyburd/redigo/redis"
 )
 

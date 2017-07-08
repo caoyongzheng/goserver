@@ -8,9 +8,9 @@ import (
 	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 
-	"github.com/caoyongzheng/gotest/context"
-	"github.com/caoyongzheng/gotest/env"
-	"github.com/caoyongzheng/gotest/model/entity"
+	"github.com/caoyongzheng/goserver/context"
+	"github.com/caoyongzheng/goserver/env"
+	"github.com/caoyongzheng/goserver/model/entity"
 	"github.com/martini-contrib/render"
 )
 

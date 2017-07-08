@@ -3,7 +3,7 @@ package auth
 import (
 	"net/http"
 
-	"github.com/caoyongzheng/gotest/context"
+	"github.com/caoyongzheng/goserver/context"
 )
 
 // RequireUser 需要用户权限

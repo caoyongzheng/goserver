@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/caoyongzheng/gotest/env"
-	"github.com/caoyongzheng/gotest/model/entity"
-	"github.com/caoyongzheng/gotest/session"
+	"github.com/caoyongzheng/goserver/env"
+	"github.com/caoyongzheng/goserver/model/entity"
+	"github.com/caoyongzheng/goserver/session"
 	"github.com/go-martini/martini"
 )
 

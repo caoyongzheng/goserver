@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/caoyongzheng/gotest/env"
+	"github.com/caoyongzheng/goserver/env"
 	"github.com/martini-contrib/render"
 )
 

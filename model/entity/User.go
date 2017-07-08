@@ -1,7 +1,7 @@
 package entity
 
 import (
-	"github.com/caoyongzheng/gotest/env"
+	"github.com/caoyongzheng/goserver/env"
 	mgo "gopkg.in/mgo.v2"
 )
 

@@ -1,0 +1,30 @@
+hash: 4c3b40e1dd5edb059a1e8d7289ef98485be582f09d44a897f72dbd428472a6c3
+updated: 2017-07-08T16:34:33.693561112+08:00
+imports:
+- name: github.com/asaskevich/govalidator
+  version: 4918b99a7cb949bb295f3c7bbaf24b577d806e35
+- name: github.com/codegangsta/inject
+  version: 33e0aa1cb7c019ccc3fbe049a8262a6403d30504
+- name: github.com/garyburd/redigo
+  version: 433969511232c397de61b1442f9fd49ec06ae9ba
+  subpackages:
+  - internal
+  - redis
+- name: github.com/go-martini/martini
+  version: 49411a5b646861ad29a6ddd5351717a0a9c49b94
+- name: github.com/martini-contrib/binding
+  version: 05d3e151b6cf34dacac6306226a33db68459a3b5
+- name: github.com/martini-contrib/cors
+  version: 553b9208d353a39b0850c02355f478ba020c86d7
+- name: github.com/martini-contrib/render
+  version: ec18f8345a1181146728238980606fb1d6f40e8c
+- name: github.com/oxtoacart/bpool
+  version: 4e1c5567d7c2dd59fa4c7c83d34c2f3528b025d6
+- name: gopkg.in/mgo.v2
+  version: 3f83fa5005286a7fe593b055f0d7771a7dce4655
+  subpackages:
+  - bson
+  - internal/json
+  - internal/sasl
+  - internal/scram
+testImports: []
